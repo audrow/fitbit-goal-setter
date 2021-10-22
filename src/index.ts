@@ -1,4 +1,6 @@
 import { load as loadConfiguration } from "./config/index.ts";
+import { makeParser } from "./cli/index.ts"
+import type { Arguments } from "./deps.ts"
 
 const INTRADAY_STEPS_KEY = "activities-steps-intraday";
 
@@ -15,6 +17,7 @@ async function fitbitRequest(
   );
 
   if (!response.ok) {
+    console.log(response);
     throw new Error(
       `Trouble connecting to Fitbit - make sure your credentials are correct: status ${response.status}`,
     );
@@ -51,4 +54,17 @@ async function main() {
   });
 }
 
-await main();
+// await main();
+
+const printArgs = (args: Arguments) => {
+  console.log(args);
+}
+
+// processArgs(Deno.args)
+const parser = makeParser({
+  "list-devices": printArgs,
+  "test-api-keys": printArgs,
+  "goal-status": printArgs,
+  "export": printArgs,
+});
+parser(Deno.args);
