@@ -49,14 +49,19 @@ async function fitbitRequest(
   return json;
 }
 
+function intraprocessToArray(intradaySteps: { time: string; value: number }[]) {
+  const steps = intradaySteps.map((step) => step.value);
+  return steps;
+}
+
 async function main() {
   const config = await loadConfiguration("dev");
   config.fitbit.devices.forEach(async (device) => {
     // console.log(device);
     // console.log(device.accessToken);
     const accessToken = device.accessToken;
-    console.log(await getIntradaySteps(accessToken));
-    // console.log(`${device.name} steps`);
+    const fitbitSteps = await getIntradaySteps(accessToken);
+    const steps = intraprocessToArray(fitbitSteps);
   });
 }
 
