@@ -1,6 +1,9 @@
 /*
  * See Fitbit API documentation:
  * https://dev.fitbit.com/build/reference/web-api/activity/
+ *
+ * Also see my previous Fitbit Client for ABM:
+ * https://github.com/robotpt/ros-abm-interaction/blob/master/src/abm_fitbit_client/__init__.py
  */
 
 import { load as loadConfiguration } from "../config/index.ts";
