@@ -15,3 +15,18 @@ can also make a command for runnning arbitrary Fitbit API commands.
 
 With this being said, I will start on getting the current data and then getting
 the active steps today.
+
+### Result
+
+Getting the intraday data works. I've also added a command to get the last sync.
+Next I will be working to get the active steps.
+
+To get the active steps, I will have to reference my previous implementation. I
+also plan to make all of the parameters set from the config file.
+
+Once I have the active steps, I will be able to work on goal setting.
+
+I should also write tests for goal setting and calculating active steps. It may
+be good to mock up the Fitbit interface and test my error handling in the
+requests, although it seems to work fine, as long as their API doesn't change,
+but my tests won't catch that; the system will just stop working.
