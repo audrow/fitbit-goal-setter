@@ -9,6 +9,7 @@
 import { load as loadConfiguration } from "../config/index.ts";
 
 const INTRADAY_STEPS_KEY = "activities-steps-intraday";
+const LAST_SYNC_KEY = "lastSyncTime";
 
 async function getIntradaySteps(accessToken: string, dateStr = "today") {
   const json = await fitbitRequest({
@@ -25,6 +26,23 @@ async function getIntradaySteps(accessToken: string, dateStr = "today") {
     );
   }
   return json[INTRADAY_STEPS_KEY]["dataset"];
+}
+
+async function getLastSync(accessToken: string) {
+  const json = await fitbitRequest({
+    requestUrl: `https://api.fitbit.com/1/user/-/devices.json`,
+    accessToken,
+  });
+  if (json.length !== 1) {
+    console.error(json);
+    throw new Error(`There should be exactly one device, ${json.length} found`);
+  }
+  const device = json[0];
+  if (!(LAST_SYNC_KEY in device)) {
+    console.error(device);
+    throw new Error("Didn't see last sync time in the returned data");
+  }
+  return device[LAST_SYNC_KEY] as Date;
 }
 
 async function fitbitRequest(
@@ -57,11 +75,13 @@ function intraprocessToArray(intradaySteps: { time: string; value: number }[]) {
 async function main() {
   const config = await loadConfiguration("dev");
   config.fitbit.devices.forEach(async (device) => {
-    // console.log(device);
-    // console.log(device.accessToken);
     const accessToken = device.accessToken;
     const fitbitSteps = await getIntradaySteps(accessToken);
     const steps = intraprocessToArray(fitbitSteps);
+    console.log(
+      await getLastSync(accessToken),
+    );
+    console.log(`${device.name} steps`);
   });
 }
 
