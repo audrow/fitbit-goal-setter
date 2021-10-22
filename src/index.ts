@@ -11,5 +11,6 @@ const parser = makeParser({
   "test-api-keys": printArgs,
   "goal-status": printArgs,
   "export": printArgs,
+  "call-fitbit-api": printArgs,
 });
 // parser(Deno.args);
