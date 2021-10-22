@@ -1,11 +1,11 @@
-import { yargs } from "../deps.ts"
-import type { Arguments } from "../deps.ts"
+import { yargs } from "../deps.ts";
+import type { Arguments } from "../deps.ts";
 
 export interface callbacks {
-  "list-devices": (args: Arguments) => void,
-  "test-api-keys": (args: Arguments) => void,
-  "goal-status": (args: Arguments) => void,
-  "export": (args: Arguments) => void,
+  "list-devices": (args: Arguments) => void;
+  "test-api-keys": (args: Arguments) => void;
+  "goal-status": (args: Arguments) => void;
+  "export": (args: Arguments) => void;
 }
 
 export const makeParser = (callbacks: callbacks) => {
@@ -35,6 +35,6 @@ export const makeParser = (callbacks: callbacks) => {
       .alias("v", "version")
       .strict()
       .demandCommand(1)
-      .parse()
-  }
-}
+      .parse();
+  };
+};
