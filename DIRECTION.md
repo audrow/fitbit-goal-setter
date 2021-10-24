@@ -30,3 +30,14 @@ I should also write tests for goal setting and calculating active steps. It may
 be good to mock up the Fitbit interface and test my error handling in the
 requests, although it seems to work fine, as long as their API doesn't change,
 but my tests won't catch that; the system will just stop working.
+
+## 2021-10-24
+
+My next step is to get the active steps. To do this, I should look at my earlier
+implementation. All of the parameters should be set from the config file,
+instead of hard-coding the various files throughout the project.
+
+After that, I will work on goal setting.
+
+I think for both of these, I should test them, as I am writing them. This will
+be a fun exercise.
