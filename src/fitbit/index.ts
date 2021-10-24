@@ -6,12 +6,23 @@
  * https://github.com/robotpt/ros-abm-interaction/blob/master/src/abm_fitbit_client/__init__.py
  */
 
-import { load as loadConfiguration } from "../config/index.ts";
+import { getActiveSteps } from "./activeSteps.ts";
+import { ActiveStepsConfig } from "./types.ts";
 
 const INTRADAY_STEPS_KEY = "activities-steps-intraday";
 const LAST_SYNC_KEY = "lastSyncTime";
 
-async function getIntradaySteps(accessToken: string, dateStr = "today") {
+export async function getActiveStepTotal(
+  accessToken: string,
+  dateStr = "today",
+  config: ActiveStepsConfig,
+) {
+  const steps = await getIntradaySteps(accessToken, dateStr);
+  const stepsArray = intradayToArray(steps);
+  return getActiveSteps(stepsArray, config);
+}
+
+export async function getIntradaySteps(accessToken: string, dateStr = "today") {
   const json = await fitbitRequest({
     requestUrl:
       `https://api.fitbit.com/1/user/-/activities/steps/date/${dateStr}/1d.json`,
@@ -28,7 +39,7 @@ async function getIntradaySteps(accessToken: string, dateStr = "today") {
   return json[INTRADAY_STEPS_KEY]["dataset"];
 }
 
-async function getLastSync(accessToken: string) {
+export async function getLastSync(accessToken: string) {
   const json = await fitbitRequest({
     requestUrl: `https://api.fitbit.com/1/user/-/devices.json`,
     accessToken,
@@ -45,7 +56,7 @@ async function getLastSync(accessToken: string) {
   return device[LAST_SYNC_KEY] as Date;
 }
 
-async function fitbitRequest(
+export async function fitbitRequest(
   options: { requestUrl: string; accessToken: string },
 ) {
   const response = await fetch(
@@ -67,22 +78,7 @@ async function fitbitRequest(
   return json;
 }
 
-function intraprocessToArray(intradaySteps: { time: string; value: number }[]) {
+function intradayToArray(intradaySteps: { time: string; value: number }[]) {
   const steps = intradaySteps.map((step) => step.value);
   return steps;
 }
-
-async function main() {
-  const config = await loadConfiguration("dev");
-  config.fitbit.devices.forEach(async (device) => {
-    const accessToken = device.accessToken;
-    const fitbitSteps = await getIntradaySteps(accessToken);
-    const steps = intraprocessToArray(fitbitSteps);
-    console.log(
-      await getLastSync(accessToken),
-    );
-    console.log(`${device.name} steps`);
-  });
-}
-
-await main();

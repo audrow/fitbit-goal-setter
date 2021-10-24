@@ -1,4 +1,5 @@
 import { parse } from "../deps.ts";
+import { ActiveStepsConfig } from "../fitbit/types.ts";
 
 type Configuration = {
   fitbit: {
@@ -6,6 +7,7 @@ type Configuration = {
       name: string;
       accessToken: string;
     }[];
+    activeSteps: ActiveStepsConfig;
   };
   accessTokens: string[];
 };
