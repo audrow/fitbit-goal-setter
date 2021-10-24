@@ -11,7 +11,7 @@ following:
 - Comparing if a user has reached their goal
 
 Later, I will make it easier to generate reports using this interface. Perhaps I
-can also make a command for runnning arbitrary Fitbit API commands.
+can also make a command for running arbitrary Fitbit API commands.
 
 With this being said, I will start on getting the current data and then getting
 the active steps today.
@@ -41,3 +41,21 @@ After that, I will work on goal setting.
 
 I think for both of these, I should test them, as I am writing them. This will
 be a fun exercise.
+
+### Results
+
+Today, I have coded to get the active steps. I have also updated the command
+line interface to run a few commands that use this interface, namely a command
+to get status, check the API keys, and a command to list the devices. These work
+well at the moment.
+
+The next step is to calculate goals, given the active steps data. It is likely
+that I should have a sort of caching system for this, so that I don't have to
+repeatedly pull from the Fitbit API for each day, and so that the code is
+faster. I will have to think of exactly how this works. Perhaps it can be, once
+a day is pulled, it is stored somewhere. From there, I can also compute the
+active steps and record the user's goal. This can be stored somewhere, too. It
+will probably involve adding a notion of pulling data for every day between the
+start of the study and the previous day. I will think more about this. Perhaps I
+can make a pull command, as well, to pull down data for all previous days, we'll
+see.
