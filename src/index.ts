@@ -10,48 +10,61 @@ const printArgs = (args: Arguments) => {
 };
 
 const listDevices = async (args: Arguments) => {
-  console.log("Devices\n-------")
-  config.fitbit.devices.forEach(device => {
-    console.log(`\t* ${device.name}`)
-  })
-  console.log("\nGo into your config file to adjust devices")
-}
+  console.log("Devices\n-------");
+  config.fitbit.devices.forEach((device) => {
+    console.log(`\t* ${device.name}`);
+  });
+  console.log("\nGo into your config file to adjust devices");
+};
 
 const testApiKeys = async (args: Arguments) => {
-  console.log("Checking...\n")
+  console.log("Checking...\n");
   let isError = false;
   for (const device of config.fitbit.devices) {
     try {
-      await getLastSync(device.accessToken)
+      await getLastSync(device.accessToken);
     } catch (e) {
-      console.error(`Failed to access device '${device.name}': ${e}`)
+      console.error(`Failed to access device '${device.name}': ${e}`);
       isError = true;
-      continue
+      continue;
     }
     try {
-      await getActiveStepTotal(device.accessToken, args.date, config.fitbit.activeSteps)
+      await getActiveStepTotal(
+        device.accessToken,
+        args.date,
+        config.fitbit.activeSteps,
+      );
     } catch (e) {
-      console.error(`Failed to access intra day steps data for device '${device.name}': ${e}`)
+      console.error(
+        `Failed to access intra day steps data for device '${device.name}': ${e}`,
+      );
       isError = true;
-      continue
+      continue;
     }
-    console.log(`* Device '${device.name}' syncs and has access to intraday steps data`)
+    console.log(
+      `\t* Device '${device.name}' syncs and has access to intraday steps data`,
+    );
   }
   if (isError) {
-    console.error("\nPlease fix the errors above and try again")
+    console.error("\nPlease fix the errors above and try again");
   } else {
-    console.log("\nAll devices are syncing and have access to intraday steps data")
+    console.log(
+      "\nAll devices are syncing and have access to intraday steps data",
+    );
   }
-
-}
+};
 
 const getStatus = async (args: Arguments) => {
-  config.fitbit.devices.forEach(async device => {
-    const activeSteps = await getActiveStepTotal(device.accessToken, args.date, config.fitbit.activeSteps)
-    const lastSyncTime = await getLastSync(device.accessToken)
-    console.log(`${device.name} - ${activeSteps} steps - ${lastSyncTime}`)
+  config.fitbit.devices.forEach(async (device) => {
+    const activeSteps = await getActiveStepTotal(
+      device.accessToken,
+      args.date,
+      config.fitbit.activeSteps,
+    );
+    const lastSyncTime = await getLastSync(device.accessToken);
+    console.log(`\t* ${device.name} - ${activeSteps} steps - ${lastSyncTime}`);
   });
-}
+};
 
 const parser = makeParser({
   "list-devices": listDevices,
