@@ -1,15 +1,16 @@
 import { parse } from "../deps.ts";
-import { ActiveStepsConfig } from "../fitbit/types.ts";
+import { ActiveStepsConfig, GoalSettingConfig } from "../fitbit/types.ts";
 
 type Configuration = {
   fitbit: {
     devices: {
       name: string;
       accessToken: string;
+      startDate: Date;
     }[];
     activeSteps: ActiveStepsConfig;
   };
-  accessTokens: string[];
+  goalSetting: GoalSettingConfig;
 };
 
 export async function load(env = "dev"): Promise<Configuration> {

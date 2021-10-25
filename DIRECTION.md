@@ -59,3 +59,17 @@ will probably involve adding a notion of pulling data for every day between the
 start of the study and the previous day. I will think more about this. Perhaps I
 can make a pull command, as well, to pull down data for all previous days, we'll
 see.
+
+## 2021-10-25
+
+Today, I will work on goal setting. It seems that the actual goal setting is
+simple. It will probably be mostly a problem of caching the data.
+
+### Results
+
+I worked on writing the goal setting. I made and tested get weekly goal. I also
+tested a function to get the week number. This is the opposite of get remaining
+weeks, which I think is better design.
+
+The next thing to do is tho test the weekly goal and then add the daily goal.
+From there, I can worry about caching.
