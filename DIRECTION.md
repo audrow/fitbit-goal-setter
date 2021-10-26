@@ -73,3 +73,11 @@ weeks, which I think is better design.
 
 The next thing to do is tho test the weekly goal and then add the daily goal.
 From there, I can worry about caching.
+
+## 2021-10-26
+
+Today, I will continue with goal setting. If all goes well, I may get to some of
+the caching system.
+
+I have just considered that I should use the previous week as a baseline for the
+first steps goal.
