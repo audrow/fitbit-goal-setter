@@ -1,4 +1,7 @@
-import { assertEquals } from "https://deno.land/std@0.112.0/testing/asserts.ts";
+import {
+  assertEquals,
+  assertThrows,
+} from "https://deno.land/std@0.112.0/testing/asserts.ts";
 
 import { getWeekGoal, getWeekNumber } from "./index.ts";
 import type { GoalSettingConfig } from "./types.ts";
@@ -75,7 +78,7 @@ const configShortStudy: GoalSettingConfig = {
   },
 };
 Deno.test({
-  name: "TODO test getting the week goal",
+  name: "test getting the week goal",
   fn: () => {
     const testCases: {
       expected: number;
@@ -223,6 +226,34 @@ Deno.test({
         testCase.config,
       );
       assertEquals(actual, testCase.expected, testCase.comment);
+    });
+  },
+});
+
+Deno.test({
+  name: "get goal throws error before study starts",
+  fn: () => {
+    assertThrows(() => {
+      getWeekGoal(
+        0,
+        new Date("2020-01-01"),
+        new Date("2019-12-31"),
+        configShortStudy,
+      );
+    });
+  },
+});
+
+Deno.test({
+  name: "get goal throws error after study ends",
+  fn: () => {
+    assertThrows(() => {
+      getWeekGoal(
+        0,
+        new Date("2020-01-01"),
+        new Date("2020-01-15"),
+        configShortStudy,
+      );
     });
   },
 });
