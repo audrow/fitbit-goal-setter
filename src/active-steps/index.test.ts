@@ -10,7 +10,7 @@ const testActiveStepsConfig: ActiveStepsConfig = {
 };
 
 type StepTestCases = {
-  expected: any;
+  expected: number | number[][];
   steps: number[];
   comment?: string;
 }[];

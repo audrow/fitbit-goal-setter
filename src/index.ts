@@ -15,7 +15,7 @@ const printArgs = (args: Arguments) => {
   console.log(args);
 };
 
-const listDevices = async (args: Arguments) => {
+const listDevices = (_args: Arguments) => {
   console.log("Devices\n-------");
   config.fitbit.devices.forEach((device) => {
     console.log(`\t* ${device.name}`);
@@ -70,7 +70,7 @@ async function getActiveStepTotal(
   return getActiveSteps(stepsArray, config);
 }
 
-const getStatus = async (args: Arguments) => {
+const getStatus = (args: Arguments) => {
   config.fitbit.devices.forEach(async (device) => {
     const activeSteps = await getActiveStepTotal(
       device.accessToken,

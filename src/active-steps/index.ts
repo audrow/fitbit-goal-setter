@@ -9,7 +9,7 @@ export function getActiveSteps(steps: number[], config: ActiveStepsConfig) {
 }
 
 export function processSteps(steps: number[], config: ActiveStepsConfig) {
-  let activeSessions: number[][] = [];
+  const activeSessions: number[][] = [];
   let activeSession: number[] = [];
   let consecutiveGap = 0;
   steps.forEach((step, _) => {

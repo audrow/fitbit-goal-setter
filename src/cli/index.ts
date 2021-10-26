@@ -34,6 +34,7 @@ export interface callbacks {
 }
 
 export const makeParser = (callbacks: callbacks) => {
+  // deno-lint-ignore no-explicit-any
   return (args: any) => {
     return yargs(args)
       .command({
