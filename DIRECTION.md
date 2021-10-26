@@ -81,3 +81,9 @@ the caching system.
 
 I have just considered that I should use the previous week as a baseline for the
 first steps goal.
+
+### Results
+
+I have got the goal setting working and I have tested it.
+
+My next step is to create the data files and to use them in calculating active steps, etc. I will have to think about how these are organized.
