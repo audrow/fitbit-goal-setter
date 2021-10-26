@@ -1,12 +1,13 @@
 import { parse } from "../deps.ts";
-import { ActiveStepsConfig, GoalSettingConfig } from "../fitbit/types.ts";
+import { ActiveStepsConfig, GoalSettingConfig } from "../fitbit-api/types.ts";
 
 type Configuration = {
   fitbit: {
     devices: {
       name: string;
       accessToken: string;
-      startDate: Date;
+      startStudyDate: Date;
+      startInterventionDate: string;
     }[];
     activeSteps: ActiveStepsConfig;
   };
