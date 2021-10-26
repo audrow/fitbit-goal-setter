@@ -6,21 +6,8 @@
  * https://github.com/robotpt/ros-abm-interaction/blob/master/src/abm_fitbit_client/__init__.py
  */
 
-import { getActiveSteps } from "./activeSteps.ts";
-import { ActiveStepsConfig } from "./types.ts";
-
 const INTRADAY_STEPS_KEY = "activities-steps-intraday";
 const LAST_SYNC_KEY = "lastSyncTime";
-
-export async function getActiveStepTotal(
-  accessToken: string,
-  dateStr = "today",
-  config: ActiveStepsConfig,
-) {
-  const steps = await getIntradaySteps(accessToken, dateStr);
-  const stepsArray = intradayToArray(steps);
-  return getActiveSteps(stepsArray, config);
-}
 
 export async function getIntradaySteps(accessToken: string, dateStr = "today") {
   const json = await fitbitRequest({
@@ -78,7 +65,9 @@ export async function fitbitRequest(
   return json;
 }
 
-function intradayToArray(intradaySteps: { time: string; value: number }[]) {
+export function intradayToArray(
+  intradaySteps: { time: string; value: number }[],
+) {
   const steps = intradaySteps.map((step) => step.value);
   return steps;
 }

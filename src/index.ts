@@ -1,7 +1,13 @@
 import { load as loadConfiguration } from "./config/index.ts";
 import { makeParser } from "./cli/index.ts";
 import type { Arguments } from "./deps.ts";
-import { getActiveStepTotal, getLastSync } from "./fitbit/index.ts";
+import {
+  getIntradaySteps,
+  getLastSync,
+  intradayToArray,
+} from "./fitbit-api/index.ts";
+import { getActiveSteps } from "./active-steps/index.ts";
+import type { ActiveStepsConfig } from "./active-steps/types.ts";
 
 const config = await loadConfiguration();
 
@@ -53,6 +59,16 @@ const testApiKeys = async (args: Arguments) => {
     );
   }
 };
+
+async function getActiveStepTotal(
+  accessToken: string,
+  dateStr = "today",
+  config: ActiveStepsConfig,
+) {
+  const steps = await getIntradaySteps(accessToken, dateStr);
+  const stepsArray = intradayToArray(steps);
+  return getActiveSteps(stepsArray, config);
+}
 
 const getStatus = async (args: Arguments) => {
   config.fitbit.devices.forEach(async (device) => {

@@ -1,6 +1,6 @@
 import { assertEquals } from "https://deno.land/std@0.112.0/testing/asserts.ts";
 
-import { getActiveSteps, processSteps } from "./activeSteps.ts";
+import { getActiveSteps, processSteps } from "./index.ts";
 import type { ActiveStepsConfig } from "./types.ts";
 
 const testActiveStepsConfig: ActiveStepsConfig = {

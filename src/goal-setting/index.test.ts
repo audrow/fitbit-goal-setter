@@ -1,6 +1,6 @@
 import { assertEquals } from "https://deno.land/std@0.112.0/testing/asserts.ts";
 
-import { getWeekGoal, getWeekNumber } from "./goalSetting.ts";
+import { getWeekGoal, getWeekNumber } from "./index.ts";
 import type { GoalSettingConfig } from "./types.ts";
 
 Deno.test({
