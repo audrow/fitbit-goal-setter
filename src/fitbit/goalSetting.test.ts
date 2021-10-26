@@ -35,16 +35,45 @@ Deno.test({
   },
 });
 
-const config: GoalSettingConfig = {
-  numOfWeeks: 2,
+const configLongStudy: GoalSettingConfig = {
+  numOfWeeks: 10,
   weekly: {
     minSteps: 10,
-    finalGoal: 20,
+    finalGoal: 100,
     daysPerWeek: 5,
     minImprovementRatio: 1.1,
   },
 };
 
+const configRealisticStudy: GoalSettingConfig = {
+  numOfWeeks: 6,
+  weekly: {
+    minSteps: 2000,
+    finalGoal: 10000,
+    daysPerWeek: 5,
+    minImprovementRatio: 1.1,
+  },
+};
+
+const configHighImprovementRatio: GoalSettingConfig = {
+  numOfWeeks: 10,
+  weekly: {
+    minSteps: 10,
+    finalGoal: 100,
+    daysPerWeek: 5,
+    minImprovementRatio: 2.5,
+  },
+};
+
+const configShortStudy: GoalSettingConfig = {
+  numOfWeeks: 2,
+  weekly: {
+    minSteps: 10,
+    finalGoal: 100,
+    daysPerWeek: 5,
+    minImprovementRatio: 1.5,
+  },
+};
 Deno.test({
   name: "TODO test getting the week goal",
   fn: () => {
@@ -53,12 +82,137 @@ Deno.test({
       stepsLastWeek: number;
       startDate: string;
       testDate: string;
+      config: GoalSettingConfig;
+      comment?: string;
     }[] = [
       {
-        expected: 1,
+        expected: 10,
+        stepsLastWeek: 0,
+        startDate: "2020-01-01",
+        testDate: "2020-01-01",
+        config: configLongStudy,
+        comment: "first week use minimum",
+      },
+      {
+        expected: 19,
         stepsLastWeek: 10,
         startDate: "2020-01-01",
         testDate: "2020-01-01",
+        config: configLongStudy,
+        comment: "first week use dGoal",
+      },
+      {
+        expected: 19,
+        stepsLastWeek: 10,
+        startDate: "2020-01-01",
+        testDate: "2020-01-02",
+        config: configLongStudy,
+        comment: "first week consistency between week",
+      },
+      {
+        expected: 19,
+        stepsLastWeek: 10,
+        startDate: "2020-01-01",
+        testDate: "2020-01-07",
+        config: configLongStudy,
+        comment: "first week consistency between week in last day of week",
+      },
+      {
+        expected: 55,
+        stepsLastWeek: 10,
+        startDate: "2020-01-01",
+        testDate: "2020-01-01",
+        config: configShortStudy,
+        comment: "first week with short study",
+      },
+      {
+        expected: 25,
+        stepsLastWeek: 10,
+        startDate: "2020-01-01",
+        testDate: "2020-01-01",
+        config: configHighImprovementRatio,
+        comment: "first week use min goal from improvement ratio",
+      },
+      {
+        expected: 10,
+        stepsLastWeek: 0,
+        startDate: "2020-01-01",
+        testDate: "2020-01-08",
+        config: configShortStudy,
+        comment: "last week with short study where they do no steps",
+      },
+      {
+        expected: 100,
+        stepsLastWeek: 10,
+        startDate: "2020-01-01",
+        testDate: "2020-01-08",
+        config: configShortStudy,
+        comment: "last week with short study finishes successfully",
+      },
+      {
+        expected: 100,
+        stepsLastWeek: 55,
+        startDate: "2020-01-01",
+        testDate: "2020-01-08",
+        config: configShortStudy,
+        comment: "last week with short study finishes successfully",
+      },
+      {
+        expected: 100,
+        stepsLastWeek: 55,
+        startDate: "2020-01-01",
+        testDate: "2020-01-14",
+        config: configShortStudy,
+        comment:
+          "last week with short study finishes successfully at end of week",
+      },
+      {
+        expected: 3338,
+        stepsLastWeek: 2005,
+        startDate: "2020-01-01",
+        testDate: "2020-01-01",
+        config: configRealisticStudy,
+        comment: "week 1 of a realistic setup",
+      },
+      {
+        expected: 4670,
+        stepsLastWeek: 3338,
+        startDate: "2020-01-01",
+        testDate: "2020-01-08",
+        config: configRealisticStudy,
+        comment: "week 2 of a realistic setup",
+      },
+      {
+        expected: 6003,
+        stepsLastWeek: 4670,
+        startDate: "2020-01-01",
+        testDate: "2020-01-15",
+        config: configRealisticStudy,
+        comment: "week 3 of a realistic setup",
+      },
+      {
+        expected: 7335,
+        stepsLastWeek: 6003,
+        startDate: "2020-01-01",
+        testDate: "2020-01-22",
+        config: configRealisticStudy,
+        comment: "week 4 of a realistic setup",
+      },
+      {
+        expected: 8668,
+        stepsLastWeek: 7335,
+        startDate: "2020-01-01",
+        testDate: "2020-01-29",
+        config: configRealisticStudy,
+        comment: "week 5 of a realistic setup",
+      },
+      {
+        expected: 10000,
+        stepsLastWeek: 8668,
+        startDate: "2020-01-01",
+        testDate: "2020-02-05",
+        config: configRealisticStudy,
+        comment: "week 6 of a realistic setup",
       },
     ];
     testCases.forEach((testCase) => {
@@ -66,10 +220,9 @@ Deno.test({
         testCase.stepsLastWeek,
         new Date(testCase.startDate),
         new Date(testCase.testDate),
-        config,
+        testCase.config,
       );
-      console.log(actual, testCase.expected);
-      // assertEquals(actual, testCase.expected, `for dates ${testCase.startDate} and ${testCase.testDate}`)
+      assertEquals(actual, testCase.expected, testCase.comment);
     });
   },
 });
