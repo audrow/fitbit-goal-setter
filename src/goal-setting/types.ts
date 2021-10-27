@@ -3,7 +3,10 @@ export type GoalSettingConfig = {
   weekly: {
     minSteps: number;
     finalGoal: number;
-    daysPerWeek: number;
     minImprovementRatio: number;
+  };
+  daily: {
+    daysPerWeek: number;
+    maxImprovementRatio: number;
   };
 };

@@ -1,6 +1,37 @@
 import type { GoalSettingConfig } from "./types.ts";
 
+const DAYS_IN_WEEK = 7;
 const MS_IN_DAY = 86400000;
+
+export function getDayGoal(
+  weekGoal: number,
+  stepsSoFar: number,
+  startDate: Date,
+  currentDate: Date,
+  config: GoalSettingConfig,
+) {
+  const weekDayNumber = getDayNumber(currentDate, startDate) % DAYS_IN_WEEK;
+  const daysRemaining = DAYS_IN_WEEK - weekDayNumber;
+
+  const stepsRemaining = weekGoal - stepsSoFar;
+  if (config.daily.daysPerWeek < 1 || config.daily.daysPerWeek > 7) {
+    throw new Error("Days per week must be between 1 and 7");
+  }
+  const averageStepsPerDay = weekGoal / config.daily.daysPerWeek;
+  const maxStepsPerDay = Math.ceil(
+    averageStepsPerDay * config.daily.maxImprovementRatio,
+  );
+  const recommendedStepsPerDay = Math.ceil(
+    stepsRemaining / Math.min(
+      daysRemaining,
+      config.daily.daysPerWeek,
+    ),
+  );
+  return Math.min(
+    Math.max(recommendedStepsPerDay, averageStepsPerDay),
+    maxStepsPerDay,
+  );
+}
 
 export function getWeekGoal(
   stepsLastWeek: number,
