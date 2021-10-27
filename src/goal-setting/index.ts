@@ -1,6 +1,6 @@
 import type { GoalSettingConfig } from "./types.ts";
 
-const MS_PER_WEEK = 604800000;
+const MS_IN_DAY = 86400000;
 
 export function getWeekGoal(
   stepsLastWeek: number,
@@ -41,7 +41,11 @@ export function getWeekGoal(
   }
 }
 
-export function getWeekNumber(currentDate: Date, startDate: Date) {
+export function getDayNumber(currentDate: Date, startDate: Date): number {
   const msBetweenDates = currentDate.getTime() - startDate.getTime();
-  return Math.floor(msBetweenDates / MS_PER_WEEK) + 1;
+  return Math.floor(msBetweenDates / MS_IN_DAY);
+}
+
+export function getWeekNumber(currentDate: Date, startDate: Date) {
+  return Math.floor(getDayNumber(currentDate, startDate) / 7) + 1;
 }

@@ -3,7 +3,11 @@ import {
   assertThrows,
 } from "https://deno.land/std@0.112.0/testing/asserts.ts";
 
-import { getWeekGoal, getWeekNumber } from "./index.ts";
+import {
+  getWeekGoal,
+  getWeekNumber,
+  getDayNumber,
+} from "./index.ts";
 import type { GoalSettingConfig } from "./types.ts";
 
 Deno.test({
@@ -32,7 +36,41 @@ Deno.test({
       assertEquals(
         actual,
         testCase.expected,
-        `for dates ${testCase.startDate} and ${testCase.testDate}`,
+        `expected ${testCase.expected}, got ${actual} ` +
+        `for start date ${testCase.startDate} and end date ${testCase.testDate}`,
+      );
+    });
+  },
+});
+
+Deno.test({
+  name: "Get day number",
+  fn: () => {
+    const testCases: {
+      expected: number;
+      startDate: string;
+      testDate: string;
+    }[] = [
+      { expected: 0, startDate: "2020-01-01", testDate: "2020-01-01" },
+      { expected: 1, startDate: "2020-01-01", testDate: "2020-01-02" },
+      { expected: 2, startDate: "2020-01-01", testDate: "2020-01-03" },
+      { expected: 4, startDate: "2020-01-01", testDate: "2020-01-05" },
+      { expected: 6, startDate: "2020-01-01", testDate: "2020-01-07" },
+      { expected: 7, startDate: "2020-01-01", testDate: "2020-01-08" },
+      { expected: 13, startDate: "2020-01-01", testDate: "2020-01-14" },
+      { expected: 34, startDate: "2020-01-01", testDate: "2020-02-04" },
+      { expected: 35, startDate: "2020-01-01", testDate: "2020-02-05" },
+    ];
+    testCases.forEach((testCase) => {
+      const actual = getDayNumber(
+        new Date(testCase.testDate),
+        new Date(testCase.startDate),
+      );
+      assertEquals(
+        actual,
+        testCase.expected,
+        `expected ${testCase.expected}, got ${actual} ` +
+        `for start date ${testCase.startDate} and end date ${testCase.testDate}`,
       );
     });
   },
