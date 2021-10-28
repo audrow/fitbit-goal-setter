@@ -6,6 +6,8 @@
  * https://github.com/robotpt/ros-abm-interaction/blob/master/src/abm_fitbit_client/__init__.py
  */
 
+import type { intraDayStepsEntry } from "./types.ts"
+
 const INTRADAY_STEPS_KEY = "activities-steps-intraday";
 const LAST_SYNC_KEY = "lastSyncTime";
 
@@ -23,7 +25,7 @@ export async function getIntradaySteps(accessToken: string, dateStr = "today") {
         "and that the Fitbit request you're sending provides intraday steps data",
     );
   }
-  return json[INTRADAY_STEPS_KEY]["dataset"];
+  return json[INTRADAY_STEPS_KEY]["dataset"] as intraDayStepsEntry[];
 }
 
 export async function getLastSync(accessToken: string) {

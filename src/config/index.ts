@@ -1,5 +1,6 @@
 import { parse } from "../deps.ts";
-import { ActiveStepsConfig, GoalSettingConfig } from "../fitbit-api/types.ts";
+import { ActiveStepsConfig } from "../active-steps/types.ts";
+import { GoalSettingConfig } from "../goal-setting/types.ts";
 
 type Configuration = {
   fitbit: {

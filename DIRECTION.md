@@ -89,7 +89,7 @@ I have got the goal setting working and I have tested it.
 My next step is to create the data files and to use them in calculating active
 steps, etc. I will have to think about how these are organized.
 
-## 2021-10-25
+## 2021-10-27
 
 Today I will work on daily goal setting. This should be a bit simpler than the
 weekly case, but we'll see.
@@ -105,3 +105,7 @@ Today, I added a command to get the daily steps goals and tested it.
   - Active steps & goal
 - Tie everything together with the CLI
 - Write documentation
+
+## 2021-10-28
+
+Today I will work on the caching system. I think that I will have to do a bit of thinking about its structure.
