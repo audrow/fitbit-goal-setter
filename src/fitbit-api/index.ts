@@ -6,7 +6,7 @@
  * https://github.com/robotpt/ros-abm-interaction/blob/master/src/abm_fitbit_client/__init__.py
  */
 
-import type { intraDayStepsEntry } from "./types.ts"
+import type { intraDayStepsEntry } from "./types.ts";
 
 const INTRADAY_STEPS_KEY = "activities-steps-intraday";
 const LAST_SYNC_KEY = "lastSyncTime";

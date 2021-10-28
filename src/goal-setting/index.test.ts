@@ -1,7 +1,4 @@
-import {
-  assertEquals,
-  assertThrows,
-} from "../deps.test.ts";
+import { assertEquals, assertThrows } from "../deps.test.ts";
 
 import {
   getDayGoal,
