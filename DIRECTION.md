@@ -108,4 +108,11 @@ Today, I added a command to get the daily steps goals and tested it.
 
 ## 2021-10-28
 
-Today I will work on the caching system. I think that I will have to do a bit of thinking about its structure.
+Today I will work on the caching system. I think that I will have to do a bit of
+thinking about its structure.
+
+### Results
+
+I wrote a simple read and write to CSV file script and tested it. This required
+a good bit of learning about Deno and the commands to do things on its file
+system. Hopefully the rest of the caching system will be easier to implement.
