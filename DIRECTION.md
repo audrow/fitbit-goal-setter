@@ -116,3 +116,12 @@ thinking about its structure.
 I wrote a simple read and write to CSV file script and tested it. This required
 a good bit of learning about Deno and the commands to do things on its file
 system. Hopefully the rest of the caching system will be easier to implement.
+
+## 2021-10-29
+
+Today, I will hopefully finish the caching section.
+
+## Results
+
+I made progress adding a summary page for the general caching system. I didn't
+finish testing it. That is my next step.

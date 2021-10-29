@@ -1,6 +1,7 @@
 import { readIntradayStepsFromCsv, writeIntradayStepsToCsv } from "./index.ts";
 import { intraDayStepsEntry } from "../fitbit-api/types.ts";
-import { assertEquals, join } from "../deps.test.ts";
+import { assertEquals } from "../deps.test.ts";
+import { join } from "../deps.ts";
 
 const mockSteps: { time: string; value: number }[] = [
   { time: "1", value: 0 },
@@ -26,6 +27,20 @@ const mockSteps: { time: string; value: number }[] = [
 ];
 
 Deno.test({
+  name: "read empty file returns empty list",
+  fn: async () => {
+    const cachingDir = await Deno.makeTempDir({ dir: Deno.cwd() });
+    const cachingFile = "intraday-steps.csv";
+    const file = join(cachingDir, cachingFile);
+
+    const readData: intraDayStepsEntry[] = await readIntradayStepsFromCsv(file);
+    await Deno.remove(cachingDir, { recursive: true });
+
+    assertEquals([], readData);
+  },
+});
+
+Deno.test({
   name: "read and write intraday steps",
   fn: async () => {
     const cachingDir = await Deno.makeTempDir({ dir: Deno.cwd() });
@@ -39,3 +54,22 @@ Deno.test({
     assertEquals(mockSteps, readData);
   },
 });
+
+// TODO enable this test
+// Deno.test({
+//   name: "read and write summary to file",
+//   fn: async () => {
+//     const cachingDir = await Deno.makeTempDir({ dir: Deno.cwd() });
+//     const cachingFile = "intraday-summary.csv";
+//     const file = join(cachingDir, cachingFile);
+//     const inputData = [
+//       [new Date("2020-01-01"), 2000, 3000],
+//       [new Date("2020-01-02"), 3000, 4000],
+//       [new Date("2020-01-03"), 4000, 1000],
+//     ]
+//     inputData.forEach(async ([date, steps, distance]) => {
+//       await writeDaySummaryToCsv(file, date as Date, steps as number, distance as number);
+//     })
+//     await Deno.remove(cachingDir, { recursive: true });
+//   },
+// })
