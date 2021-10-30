@@ -30,27 +30,28 @@ export async function readIntradayStepsFromCsv(file: string) {
 
 export async function writeDaySummaryToCsv(
   file: string,
-  date: Date,
-  stepsGoal: number,
-  activeSteps: number,
+  info: {
+    date: Date;
+    stepsGoal: number;
+    activeSteps: number;
+  },
 ) {
   const header = ["date", "steps goal", "active steps", "met goal"];
   const newData = [
-    date.toLocaleDateString(),
-    stepsGoal.toString(),
-    activeSteps.toString(),
-    (activeSteps >= stepsGoal).toString(),
+    info.date.toLocaleDateString(),
+    info.stepsGoal.toString(),
+    info.activeSteps.toString(),
+    (info.activeSteps >= info.stepsGoal).toString(),
   ];
-  console.log(newData);
   let data = [];
-  if (await exists(file)) {
+  const fileExists = await exists(file);
+  if (fileExists) {
     const oldData = (await readDaySummaryFromCsvString(file));
     data = [...oldData, newData];
   } else {
     data = [newData];
   }
-  const createNew = !await exists(file);
-  const f = await Deno.open(file, { write: true, createNew: createNew });
+  const f = await Deno.open(file, { write: true, createNew: !fileExists });
   await writeCSV(f, [header, ...data]);
   f.close();
 }
@@ -84,24 +85,3 @@ export async function readDaySummaryFromCsv(file: string) {
     };
   });
 }
-
-// TODO remove this after tests are working
-// const tempDir = `${Deno.cwd()}/temp`;
-// if (!await exists(tempDir)) {
-//   await Deno.mkdir(tempDir);
-// }
-// const file = `${tempDir}/summary.csv`;
-
-// console.log(
-//   await readDaySummaryFromCsv(file)
-// )
-
-// await writeDaySummaryToCsv(file, new Date(), 10000, 5000);
-// await writeDaySummaryToCsv(file, new Date(), 20000, 20000);
-// await writeDaySummaryToCsv(file, new Date(), 30000, 5000);
-
-// console.log(
-//   await readDaySummaryFromCsv(file)
-// )
-
-// await Deno.remove(tempDir, { recursive: true });

@@ -1,4 +1,9 @@
-import { readIntradayStepsFromCsv, writeIntradayStepsToCsv } from "./index.ts";
+import {
+  readDaySummaryFromCsv,
+  readIntradayStepsFromCsv,
+  writeDaySummaryToCsv,
+  writeIntradayStepsToCsv,
+} from "./index.ts";
 import { intraDayStepsEntry } from "../fitbit-api/types.ts";
 import { assertEquals } from "../deps.test.ts";
 import { join } from "../deps.ts";
@@ -27,7 +32,7 @@ const mockSteps: { time: string; value: number }[] = [
 ];
 
 Deno.test({
-  name: "read empty file returns empty list",
+  name: "read empty intraday steps file returns empty list",
   fn: async () => {
     const cachingDir = await Deno.makeTempDir({ dir: Deno.cwd() });
     const cachingFile = "intraday-steps.csv";
@@ -55,21 +60,62 @@ Deno.test({
   },
 });
 
-// TODO enable this test
-// Deno.test({
-//   name: "read and write summary to file",
-//   fn: async () => {
-//     const cachingDir = await Deno.makeTempDir({ dir: Deno.cwd() });
-//     const cachingFile = "intraday-summary.csv";
-//     const file = join(cachingDir, cachingFile);
-//     const inputData = [
-//       [new Date("2020-01-01"), 2000, 3000],
-//       [new Date("2020-01-02"), 3000, 4000],
-//       [new Date("2020-01-03"), 4000, 1000],
-//     ]
-//     inputData.forEach(async ([date, steps, distance]) => {
-//       await writeDaySummaryToCsv(file, date as Date, steps as number, distance as number);
-//     })
-//     await Deno.remove(cachingDir, { recursive: true });
-//   },
-// })
+Deno.test({
+  name: "read empty summary returns empty list",
+  fn: async () => {
+    const cachingDir = await Deno.makeTempDir({ dir: Deno.cwd() });
+    const cachingFile = "intraday-summary.csv";
+    const file = join(cachingDir, cachingFile);
+
+    const readData = await readDaySummaryFromCsv(file);
+    await Deno.remove(cachingDir, { recursive: true });
+
+    assertEquals([], readData);
+  },
+});
+
+Deno.test({
+  name: "read and write summary to file",
+  fn: async () => {
+    const cachingDir = await Deno.makeTempDir({ dir: Deno.cwd() });
+    const cachingFile = "intraday-summary.csv";
+    const file = join(cachingDir, cachingFile);
+    const inputData = [
+      {
+        date: new Date(2020, 1, 1),
+        activeSteps: 2000,
+        stepsGoal: 3000,
+        metGoal: false, // not passed into writer
+      },
+      {
+        date: new Date(2020, 1, 2),
+        activeSteps: 4000,
+        stepsGoal: 3000,
+        metGoal: true, // not passed into writer
+      },
+      {
+        date: new Date(2020, 1, 3),
+        activeSteps: 4000,
+        stepsGoal: 5000,
+        metGoal: false, // not passed into writer
+      },
+    ];
+    for (const obj of inputData) {
+      await writeDaySummaryToCsv(file, {
+        date: obj.date,
+        activeSteps: obj.activeSteps,
+        stepsGoal: obj.stepsGoal,
+      });
+    }
+    const outData = await readDaySummaryFromCsv(file);
+
+    await Deno.remove(cachingDir, { recursive: true });
+
+    for (let idx = 0; idx < inputData.length; idx++) {
+      assertEquals(inputData[idx].date, outData[idx].date);
+      assertEquals(inputData[idx].activeSteps, outData[idx].activeSteps);
+      assertEquals(inputData[idx].stepsGoal, outData[idx].stepsGoal);
+      assertEquals(inputData[idx].metGoal, outData[idx].metGoal);
+    }
+  },
+});
