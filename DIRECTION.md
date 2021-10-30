@@ -121,7 +121,15 @@ system. Hopefully the rest of the caching system will be easier to implement.
 
 Today, I will hopefully finish the caching section.
 
-## Results
+### Results
 
 I made progress adding a summary page for the general caching system. I didn't
 finish testing it. That is my next step.
+
+## 2021-10-30
+
+### Results
+
+Today I added a test for reading and writing to CSV summary files. I also added
+code to get a date range. This will be useful to get the caching system pulling
+all dates Fitbit data.
