@@ -1,4 +1,9 @@
-import { getDateRange, getDayNumber, getWeekNumber } from "./index.ts";
+import {
+  getDateRange,
+  getDateString,
+  getDayNumber,
+  getWeekNumber,
+} from "./index.ts";
 import { assertEquals, assertThrows } from "../deps.test.ts";
 
 Deno.test({
@@ -122,6 +127,20 @@ Deno.test({
   fn: () => {
     assertThrows(() => {
       getDateRange(new Date(2021, 0, 1), new Date(2020, 0, 1));
+    });
+  },
+});
+
+Deno.test({
+  name: "get date string",
+  fn: () => {
+    const testCases: { date: Date; expected: string }[] = [
+      { date: new Date(2020, 0, 1), expected: "2020-01-01" },
+      { date: new Date(2020, 0, 31), expected: "2020-01-31" },
+      { date: new Date(2020, 1, 1), expected: "2020-02-01" },
+    ];
+    testCases.forEach((testCase) => {
+      assertEquals(testCase.expected, getDateString(testCase.date));
     });
   },
 });

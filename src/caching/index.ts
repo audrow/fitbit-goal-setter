@@ -1,5 +1,7 @@
-import { exists, readCSVObjects, writeCSV } from "../deps.ts";
+import { ensureDir, exists, join, readCSVObjects, writeCSV } from "../deps.ts";
 import type { intraDayStepsEntry } from "../fitbit-api/types.ts";
+import { getDateRange, getDateString } from "../utils/index.ts";
+import { getIntradaySteps } from "../fitbit-api/index.ts";
 
 export async function writeIntradayStepsToCsv(
   steps: { time: string; value: number }[],
@@ -85,3 +87,32 @@ export async function readDaySummaryFromCsv(file: string) {
     };
   });
 }
+
+export async function pullIntradaySteps(
+  startDate: Date,
+  endDate: Date,
+  deviceName: string,
+  accessToken: string,
+) {
+  const dates = getDateRange(startDate, endDate);
+  const dir = join("data", "intraday-steps", deviceName);
+  await ensureDir(dir);
+  for (const date of dates) {
+    const dateStr = getDateString(date);
+    const file = join(dir, `${dateStr}.csv`);
+    if (await exists(file)) {
+      console.log(`skipping ${dateStr} because it already exists`);
+    } else {
+      console.log(`saving data for ${dateStr}`);
+      const steps = await getIntradaySteps(accessToken, date);
+      await writeIntradayStepsToCsv(steps, file);
+    }
+  }
+}
+
+// export async function summarizeData(startDate: Date, endDate: Date, accessToken: string) {
+// }
+
+// const token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM0JNNzIiLCJzdWIiOiI1VllYNjkiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJhY3QgcnNldCBybG9jIHJ3ZWkgcmhyIHJudXQgcnBybyByc2xlIiwiZXhwIjoxNjY2MzY0NDU4LCJpYXQiOjE2MzQ4Mjg0NTh9.jgF4MYOQsUTj9AZdnUcFRTPh2MMZsWu6HThpRhGcqCg"
+// const deviceName = "michelley's fitbit"
+// await pullIntradaySteps(new Date(2021, 9, 21), new Date(2021, 9, 30), deviceName, token)

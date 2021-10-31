@@ -7,14 +7,19 @@
  */
 
 import type { intraDayStepsEntry } from "./types.ts";
+import { getDateString } from "../utils/index.ts";
 
 const INTRADAY_STEPS_KEY = "activities-steps-intraday";
 const LAST_SYNC_KEY = "lastSyncTime";
 
-export async function getIntradaySteps(accessToken: string, dateStr = "today") {
+export async function getIntradaySteps(
+  accessToken: string,
+  date: Date | string = "today",
+) {
   const json = await fitbitRequest({
-    requestUrl:
-      `https://api.fitbit.com/1/user/-/activities/steps/date/${dateStr}/1d.json`,
+    requestUrl: `https://api.fitbit.com/1/user/-/activities/steps/date/${
+      getFitbitDate(date)
+    }/1d.json`,
     accessToken,
   });
   if (!(INTRADAY_STEPS_KEY in json)) {
@@ -26,6 +31,16 @@ export async function getIntradaySteps(accessToken: string, dateStr = "today") {
     );
   }
   return json[INTRADAY_STEPS_KEY]["dataset"] as intraDayStepsEntry[];
+}
+
+export function getFitbitDate(date: Date | string = "today") {
+  let dateStr = "";
+  if (typeof date === "string") {
+    dateStr = date;
+  } else {
+    dateStr = getDateString(date);
+  }
+  return dateStr;
 }
 
 export async function getLastSync(accessToken: string) {

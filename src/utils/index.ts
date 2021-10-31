@@ -1,3 +1,5 @@
+import { format } from "../deps.ts";
+
 const MS_IN_DAY = 86400000;
 
 export function getDayNumber(currentDate: Date, startDate: Date): number {
@@ -20,4 +22,8 @@ export function getDateRange(startDate: Date, endDate: Date): Date[] {
     currentDate.setDate(currentDate.getDate() + 1);
   }
   return dates;
+}
+
+export function getDateString(date: Date) {
+  return format(date, "yyyy-MM-dd");
 }
