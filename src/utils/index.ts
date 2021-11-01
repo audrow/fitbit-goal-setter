@@ -16,7 +16,7 @@ export function getDateRange(startDate: Date, endDate: Date): Date[] {
     throw new Error("Start date must be before end date");
   }
   const dates: Date[] = [];
-  const currentDate = startDate;
+  const currentDate = new Date(startDate);
   while (currentDate <= endDate) {
     dates.push(new Date(currentDate));
     currentDate.setDate(currentDate.getDate() + 1);

@@ -133,3 +133,15 @@ finish testing it. That is my next step.
 Today I added a test for reading and writing to CSV summary files. I also added
 code to get a date range. This will be useful to get the caching system pulling
 all dates Fitbit data.
+
+## 2021-11-01
+
+Today I hope to finish up the caching system. This may be tricky as creating the
+summary file involves computing many things in the correct order. For example, I
+have to keep track of the goals and the total active steps.
+
+## Results
+
+I made good progress on the caching system. I almost have all of the data that I need. I just need to add the daily steps goals. Once I have that, I can save the output to a file. I think that I will generate it every time, that seems easier than reading the data in.
+
+One challenge with my current architecture is that it is quite hard to test the higher level components. This is because I have made a functional approach and rely on the functions. I could pass in the functions as arguments. This motivates that I could have used classes and passed in those classes, aka injecting those dependencies. I doubt that I'll have time for this, since it is a larger architectural change.
