@@ -158,3 +158,14 @@ a larger architectural change.
 
 Today I hope to finish up the caching and also to write the manual, if there is
 time.
+
+### Results
+
+Today I finished exposing the required data and then I wrote a function to get
+the status for the current day. I tested this on real data and it seems to be
+working fine. I have gotten a few Fitbit errors that I believe are unrelated to
+my implementation: a 503 error, because their site was briefly down, and a 429
+error, because I've made too many requests in a small period of time.
+
+The next step is to update the command line interface to use my functions. After
+that, I should write the manual. Maybe I can finish this later today. We'll see.
