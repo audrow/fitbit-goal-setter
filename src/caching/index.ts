@@ -1,6 +1,11 @@
 import { ensureDir, exists, join, readCSVObjects, writeCSV } from "../deps.ts";
 import type { intraDayStepsEntry } from "../fitbit-api/types.ts";
-import { getDateRange, getDateString, getWeekNumber } from "../utils/index.ts";
+import {
+  getDateRange,
+  getDateString,
+  getDayNumber,
+  getWeekNumber,
+} from "../utils/index.ts";
 import { getIntradaySteps, intradayToArray } from "../fitbit-api/index.ts";
 import { getActiveSteps } from "../active-steps/index.ts";
 import type { ActiveStepsConfig } from "../active-steps/types.ts";
@@ -225,7 +230,19 @@ function isGreaterThanDate(date1: Date, date2: Date) {
   return isLessThanDate(date2, date1);
 }
 
+type SummaryRecord = {
+  date: Date;
+  weekNum: number;
+  dayNum: number;
+  weeklyStepsGoal: number;
+  dailyStepsGoal: number;
+  activeSteps: number;
+  isMet: boolean;
+};
+
 export async function pullData(config: Configuration) {
+  const deviceRecords: { [deviceName: string]: SummaryRecord[] } = {};
+
   for (const device of config.fitbit.devices) {
     const lastDayOfStudy = getLastDay(
       device.startInterventionDate,
@@ -274,7 +291,10 @@ export async function pullData(config: Configuration) {
     );
     interventionDatesSoFar.pop(); // remove the last date, which is the endDate
     let weekSteps = 0;
+    const records: SummaryRecord[] = [];
+
     for (const date of interventionDatesSoFar) {
+      const dayNum = getDayNumber(date, device.startInterventionDate);
       const weekNum = getWeekNumber(date, device.startInterventionDate);
       if (!(weekNum in weekGoals)) {
         const weekGoal = getWeekGoal(
@@ -293,7 +313,6 @@ export async function pullData(config: Configuration) {
           config.fitbit.activeSteps,
         );
       }
-      // TODO check the order here
       const dayGoal = getDayGoal(
         weekGoals[weekNum],
         weekSteps,
@@ -301,14 +320,54 @@ export async function pullData(config: Configuration) {
         date,
         config.goalSetting,
       );
-      console.log(
-        `${date.toLocaleDateString()} ${weekSteps} ${
-          weekGoals[weekNum]
-        } ${dayGoal}`,
-      );
+      records.push({
+        date,
+        weekNum,
+        dayNum,
+        weeklyStepsGoal: weekGoals[weekNum],
+        dailyStepsGoal: dayGoal,
+        activeSteps: weekSteps,
+        isMet: dayGoal <= weekSteps,
+      });
     }
-    console.log(weekGoals, "\n", weekStepsRecord);
+    writeSummaryToCSV(
+      device.name,
+      records,
+    );
+    deviceRecords[device.name] = records;
   }
+  return deviceRecords;
+}
+
+async function writeSummaryToCSV(
+  deviceName: string,
+  records: SummaryRecord[],
+) {
+  const dir = getDeviceDir(deviceName);
+  const file = join(dir, "summary.csv");
+  const header = [
+    "date",
+    "weekNum",
+    "dayNum",
+    "weeklyStepsGoal",
+    "dailyStepsGoal",
+    "activeSteps",
+    "isMet",
+  ];
+  const data = records.map((r) => {
+    const arr = Object.values(r);
+    return arr.map((v) => {
+      if (v instanceof Date) {
+        return v.toLocaleDateString();
+      } else {
+        return v.toString();
+      }
+    });
+  });
+  console.log(data);
+  const f = await Deno.open(file, { write: true });
+  await writeCSV(f, [header, ...data]);
+  f.close();
 }
 
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -322,5 +381,6 @@ function getMean(arr: number[]) {
 
 // import { load } from "../config/index.ts";
 // const config = await load();
-// console.log(config);
-// pullData(config);
+// // console.log(config);
+// // console.log(await pullData(config));
+// await pullData(config);
