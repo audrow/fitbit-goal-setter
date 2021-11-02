@@ -234,11 +234,10 @@ export async function pullData(config: Configuration) {
       config.goalSetting.numOfWeeks,
     );
 
-    // TODO handle config dates being in UTC time
     const currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0);
     let endDate: Date;
-    if (lastDayOfStudy.getTime() < currentDate.getTime()) {
+    if (isLessThanDate(lastDayOfStudy, currentDate)) {
       endDate = new Date(lastDayOfStudy);
     } else {
       endDate = new Date(currentDate);
@@ -265,8 +264,6 @@ export async function pullData(config: Configuration) {
       preStudyMeanDailyActiveSteps * config.goalSetting.daily.daysPerWeek,
       config.goalSetting.weekly.minSteps,
     );
-
-    console.log(device.name, baseWeeklyStepsGoal);
 
     const weekGoals: { [weekNum: number]: number } = { 1: baseWeeklyStepsGoal };
     const weekStepsRecord: { [weekNum: number]: number } = {};
