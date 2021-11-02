@@ -2,18 +2,16 @@ import { load as loadConfiguration } from "./config/index.ts";
 import { makeParser } from "./cli/index.ts";
 import type { Arguments } from "./deps.ts";
 import {
+  fitbitRequest,
   getIntradaySteps,
   getLastSync,
   intradayToArray,
 } from "./fitbit-api/index.ts";
 import { getActiveSteps } from "./active-steps/index.ts";
 import type { ActiveStepsConfig } from "./active-steps/types.ts";
+import { getStatus, pullData } from "./caching/index.ts";
 
 const config = await loadConfiguration();
-
-const printArgs = (args: Arguments) => {
-  console.log(args);
-};
 
 const listDevices = (_args: Arguments) => {
   console.log("Devices\n-------");
@@ -70,23 +68,35 @@ async function getActiveStepTotal(
   return getActiveSteps(stepsArray, config);
 }
 
-const getStatus = (args: Arguments) => {
-  config.fitbit.devices.forEach(async (device) => {
-    const activeSteps = await getActiveStepTotal(
-      device.accessToken,
-      args.date,
-      config.fitbit.activeSteps,
-    );
-    const lastSyncTime = await getLastSync(device.accessToken);
-    console.log(`\t* ${device.name} - ${activeSteps} steps - ${lastSyncTime}`);
-  });
+const pullDataCallback = (_args: Arguments) => {
+  console.log("Pulling data...\n");
+  pullData(config);
+};
+
+const getStatusCallback = async (_args: Arguments) => {
+  const status = await getStatus(config);
+  for (const device of config.fitbit.devices) {
+    console.log(`\nDevice: ${device.name}`);
+    const deviceStatus = status[device.name];
+    console.log(deviceStatus);
+  }
+};
+
+const callFitbitApi = async (args: Arguments) => {
+  for (const device of config.fitbit.devices) {
+    const response = await fitbitRequest({
+      requestUrl: args.request,
+      accessToken: device.accessToken,
+    });
+    console.log(`\nDevice: ${device.name}\n${response}`);
+  }
 };
 
 const parser = makeParser({
   "list-devices": listDevices,
   "test-api-keys": testApiKeys,
-  "goal-status": getStatus,
-  "export": printArgs,
-  "call-fitbit-api": printArgs,
+  "goal-status": getStatusCallback,
+  "pull-data": pullDataCallback,
+  "call-fitbit-api": callFitbitApi,
 });
 parser(Deno.args);

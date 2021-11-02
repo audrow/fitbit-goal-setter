@@ -13,22 +13,20 @@ export interface callbacks {
    */
   "test-api-keys": (args: Arguments) => void;
   /*
+   * This pulls the data into the data directory
+   */
+  "pull-data": (args: Arguments) => void;
+  /*
    * Gives the following information:
    * - The current goal status
    * - The steps goal and the current number of steps
    * - The time that the user last synced their data
+   *
+   * It also pulls the data into the data directory
    */
   "goal-status": (args: Arguments) => void;
   /*
-   * Exports the following files
-   * - Intraday steps for each Fitbit
-   * - Active steps for each Fitbit in time series
-   * - Goals and total steps for each Fitbit + (additional step of if actual steps >= goal for the day)
-   */
-  "export": (args: Arguments) => void;
-  /*
-   * Makes an arbitrary request to the Fitbit API and returns the response.
-   * This should have an option to save the response to a file.
+   * calls the fitbit API with your own command
    */
   "call-fitbit-api": (args: Arguments) => void;
 }
@@ -53,9 +51,14 @@ export const makeParser = (callbacks: callbacks) => {
         handler: callbacks["goal-status"],
       })
       .command({
-        command: "export",
-        describe: "Export data",
-        handler: callbacks["export"],
+        command: "pull-data",
+        describe: "Pull data from the Fitbit API",
+        handler: callbacks["pull-data"],
+      })
+      .command({
+        command: "call-fitbit-api [request]",
+        describe: "Make your own call to the fitbit API for all devices",
+        handler: callbacks["call-fitbit-api"],
       })
       .alias("h", "help")
       .alias("v", "version")
