@@ -129,23 +129,6 @@ function getIntradayStepsDir(deviceName: string) {
   return join(getDeviceDir(deviceName), "intraday-steps");
 }
 
-// TODO finish
-// export async function summarizeData(
-//   startStudyDate: Date,
-//   startInterventionDate: Date,
-//   currentDate: Date,
-//   deviceName: string,
-//   accessToken: string,
-// ) {
-//   if (startInterventionDate.getTime() >= currentDate.getTime()) {
-//     throw new Error("startInterventionDate must be before the current date");
-//   }
-//   const preStudyDates = getDateRange(startStudyDate, startInterventionDate);
-//   preStudyDates.pop(); // remove the last date, which is the startInterventionDate
-//   const studyDates = getDateRange(startInterventionDate, currentDate);
-//   console.log(preStudyDates);
-// }
-
 export async function getPreStudyActiveStepsFromFiles(
   startStudyDate: Date,
   startInterventionDate: Date,
@@ -236,7 +219,8 @@ type SummaryRecord = {
   dayNum: number;
   weeklyStepsGoal: number;
   dailyStepsGoal: number;
-  activeSteps: number;
+  activeStepsThisDay: number;
+  activeStepsThisWeek: number;
   isMet: boolean;
 };
 
@@ -306,13 +290,14 @@ export async function pullData(config: Configuration) {
         weekGoals[weekNum] = weekGoal;
         weekStepsRecord[weekNum - 1] = weekSteps;
         weekSteps = 0;
-      } else {
-        weekSteps += await getActiveStepsFromFile(
-          date,
-          device.name,
-          config.fitbit.activeSteps,
-        );
       }
+      const dailySteps = await getActiveStepsFromFile(
+        date,
+        device.name,
+        config.fitbit.activeSteps,
+      );
+      weekSteps += dailySteps;
+
       const dayGoal = getDayGoal(
         weekGoals[weekNum],
         weekSteps,
@@ -326,8 +311,9 @@ export async function pullData(config: Configuration) {
         dayNum,
         weeklyStepsGoal: weekGoals[weekNum],
         dailyStepsGoal: dayGoal,
-        activeSteps: weekSteps,
-        isMet: dayGoal <= weekSteps,
+        activeStepsThisDay: dailySteps,
+        activeStepsThisWeek: weekSteps,
+        isMet: dayGoal <= dailySteps,
       });
     }
     writeSummaryToCSV(
@@ -351,7 +337,8 @@ async function writeSummaryToCSV(
     "dayNum",
     "weeklyStepsGoal",
     "dailyStepsGoal",
-    "activeSteps",
+    "activeStepsThisDay",
+    "activeStepsThisWeek",
     "isMet",
   ];
   const data = records.map((r) => {
@@ -379,8 +366,77 @@ function getMean(arr: number[]) {
   return arr.reduce((a, b) => a + b, 0) / arr.length;
 }
 
+export async function getStatus(config: Configuration) {
+  const deviceStatus: {
+    [deviceName: string]: {
+      dayGoal: number;
+      activeStepsSoFar: number;
+      isMet: boolean;
+    } | { comment: string };
+  } = {};
+  const deviceRecords = await pullData(config);
+  for (const device of config.fitbit.devices) {
+    const record = deviceRecords[device.name];
+    const lastDayOfStudy = getLastDay(
+      device.startInterventionDate,
+      config.goalSetting.numOfWeeks,
+    );
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    if (isGreaterThanDate(currentDate, lastDayOfStudy)) {
+      console.log(
+        `Study with '${device.name}' is over.  Last day of study: ${lastDayOfStudy.toLocaleDateString()}`,
+      );
+      deviceStatus[device.name] = {
+        comment: "Study with device is over",
+      };
+    } else {
+      const lastRecord = record[record.length - 1];
+      const lastWeekNum = lastRecord.weekNum;
+      const lastWeekGoal = lastRecord.weeklyStepsGoal;
+      const currentWeekNum = getWeekNumber(
+        currentDate,
+        device.startInterventionDate,
+      );
+
+      let weekGoal: number;
+      if (currentWeekNum === lastWeekNum) {
+        weekGoal = lastWeekGoal;
+      } else {
+        weekGoal = getWeekGoal(
+          lastRecord.activeStepsThisWeek,
+          device.startInterventionDate,
+          currentDate,
+          config.goalSetting,
+        );
+      }
+      const dayGoal = getDayGoal(
+        weekGoal,
+        lastRecord.activeStepsThisWeek,
+        device.startInterventionDate,
+        currentDate,
+        config.goalSetting,
+      );
+      const intradaySteps = await getIntradaySteps(
+        device.accessToken,
+        currentDate,
+      );
+      const intradayStepsArr = intradayToArray(intradaySteps);
+      const activeSteps = getActiveSteps(
+        intradayStepsArr,
+        config.fitbit.activeSteps,
+      );
+      deviceStatus[device.name] = {
+        dayGoal,
+        activeStepsSoFar: activeSteps,
+        isMet: dayGoal <= activeSteps,
+      };
+    }
+  }
+  return deviceStatus;
+}
+
 // import { load } from "../config/index.ts";
 // const config = await load();
-// // console.log(config);
-// // console.log(await pullData(config));
 // await pullData(config);
+// console.log(await getStatus(config));
