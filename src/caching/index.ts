@@ -351,8 +351,7 @@ async function writeSummaryToCSV(
       }
     });
   });
-  console.log(data);
-  const f = await Deno.open(file, { write: true });
+  const f = await Deno.open(file, { write: true, create: true });
   await writeCSV(f, [header, ...data]);
   f.close();
 }
