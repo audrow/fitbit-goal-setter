@@ -104,7 +104,7 @@ export async function pullIntradaySteps(
   accessToken: string,
 ) {
   const dates = getDateRange(startDate, endDate);
-  dates.pop() // remove the end date
+  dates.pop(); // remove the end date
   const dir = getIntradayStepsDir(deviceName);
   await ensureDir(dir);
   for (const date of dates) {
