@@ -27,10 +27,11 @@ export function getDayGoal(
       config.daily.daysPerWeek,
     ),
   );
-  return Math.min(
-    Math.max(recommendedStepsPerDay, averageStepsPerDay),
-    maxStepsPerDay,
-  );
+  return Math.ceil(
+    Math.min(
+      Math.max(recommendedStepsPerDay, averageStepsPerDay),
+      maxStepsPerDay,
+  ));
 }
 
 export function getWeekGoal(
@@ -68,6 +69,8 @@ export function getWeekGoal(
     const dGoal = Math.round(
       (config.weekly.finalGoal - stepsLastWeek) / weeksRemaining,
     );
-    return Math.max(minGoal, stepsLastWeek + dGoal);
+    return Math.ceil(
+      Math.max(minGoal, stepsLastWeek + dGoal
+    ));
   }
 }
