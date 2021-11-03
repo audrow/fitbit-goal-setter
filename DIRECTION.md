@@ -169,3 +169,11 @@ error, because I've made too many requests in a small period of time.
 
 The next step is to update the command line interface to use my functions. After
 that, I should write the manual. Maybe I can finish this later today. We'll see.
+
+### Update
+
+I also finished the command line interface. Now I just need to check it and document how to use this function. From there, it will be ready to share.
+
+## 2021-11-03
+
+Today is all about documentation. It would also be good to try on a Windows machine to see if it works.
