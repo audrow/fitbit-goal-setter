@@ -12,4 +12,5 @@ export type Configuration = {
     activeSteps: ActiveStepsConfig;
   };
   goalSetting: GoalSettingConfig;
+  debug: boolean;
 };

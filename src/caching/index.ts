@@ -102,6 +102,7 @@ export async function pullIntradaySteps(
   endDate: Date,
   deviceName: string,
   accessToken: string,
+  isDebug: boolean,
 ) {
   const dates = getDateRange(startDate, endDate);
   dates.pop(); // remove the end date
@@ -111,11 +112,15 @@ export async function pullIntradaySteps(
     const dateStr = getDateString(date);
     const file = join(dir, `${dateStr}.csv`);
     if (await exists(file)) {
-      console.log(
-        `skipping ${dateStr} for '${deviceName}' because it already exists`,
-      );
+      if (isDebug) {
+        console.debug(
+          `skipping ${dateStr} for '${deviceName}' because it already exists`,
+        );
+      }
     } else {
-      console.log(`saving data for ${dateStr} for '${deviceName}'`);
+      if (isDebug) {
+        console.debug(`saving data for ${dateStr} for '${deviceName}'`);
+      }
       const steps = await getIntradaySteps(accessToken, date);
       await writeIntradayStepsToCsv(steps, file);
     }
@@ -236,6 +241,11 @@ export async function pullData(config: Configuration) {
 
     const currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0);
+
+    if (isGreaterThanDate(device.startStudyDate, currentDate)) {
+      continue
+    }
+
     let endDate: Date;
     if (isLessThanDate(lastDayOfStudy, currentDate)) {
       endDate = new Date(lastDayOfStudy);
@@ -248,7 +258,12 @@ export async function pullData(config: Configuration) {
       endDate,
       device.name,
       device.accessToken,
+      config.debug,
     );
+
+    if (isGreaterThanDate(device.startInterventionDate, currentDate)) {
+      continue
+    }
 
     const preStudyActiveSteps = await getPreStudyActiveStepsFromFiles(
       device.startStudyDate,
@@ -380,10 +395,15 @@ export async function getStatus(config: Configuration) {
     );
     const currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0);
-    if (isGreaterThanDate(currentDate, lastDayOfStudy)) {
-      console.log(
-        `Study with '${device.name}' is over.  Last day of study: ${lastDayOfStudy.toLocaleDateString()}`,
-      );
+    if (isGreaterThanDate(device.startStudyDate, currentDate)) {
+      deviceStatus[device.name] = {
+        comment: "Pre intervention period of getting steps baseline hasn't begun yet",
+      };
+    } else if (isGreaterThanDate(device.startInterventionDate, currentDate)) {
+      deviceStatus[device.name] = {
+        comment: "Pre intervention period of getting steps baseline has begun",
+      };
+    } else if (isGreaterThanDate(currentDate, lastDayOfStudy)) {
       deviceStatus[device.name] = {
         comment: "Study with device is over",
       };
@@ -432,8 +452,3 @@ export async function getStatus(config: Configuration) {
   }
   return deviceStatus;
 }
-
-// import { load } from "../config/index.ts";
-// const config = await load();
-// await pullData(config);
-// console.log(await getStatus(config));
