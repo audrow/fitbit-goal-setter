@@ -27,4 +27,4 @@ jobs:
           git checkout -b deploy
           git add ${BUNDLE_DIR}/${BUNDLE_FILE}
           git commit -sm "Automated bundle operation"
-          git push --force-with-lease origin deploy
+          git push origin deploy --force
