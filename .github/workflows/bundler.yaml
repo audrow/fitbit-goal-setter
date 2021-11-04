@@ -23,4 +23,4 @@ jobs:
           git checkout -b deploy
           git add out.ts
           git commit -sm "Automated bundle operation"
-          git push origin deploy
+          git push --force-with-lease origin deploy
