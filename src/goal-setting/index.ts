@@ -57,9 +57,9 @@ export function getWeekGoal(
 
   const minGoal = Math.round(stepsLastWeek * config.weekly.minImprovementRatio);
   if (minGoal < config.weekly.minSteps) {
-    return config.weekly.minSteps;
+    return Math.ceil(config.weekly.minSteps);
   } else if (minGoal > config.weekly.finalGoal) {
-    return minGoal;
+    return Math.ceil(minGoal);
   } else {
     const weeksRemaining = config.numOfWeeks - weekNumber + 1;
     if (weeksRemaining < 1) {
