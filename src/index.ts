@@ -76,9 +76,21 @@ const pullDataCallback = (_args: Arguments) => {
 const getStatusCallback = async (_args: Arguments) => {
   const status = await getStatus(config);
   for (const device of config.fitbit.devices) {
-    console.log(`\nDevice: ${device.name}`);
     const deviceStatus = status[device.name];
-    console.log(deviceStatus);
+    let message = `
+Device: ${device.name}`;
+    if ("comment" in deviceStatus) {
+      message += `
+  Comment: ${deviceStatus.comment}`;
+    } else {
+      message += `
+  ${deviceStatus.isMet ? "HAS MET DAILY GOAL" : "Haven't met daily goal yet"}
+  Active Steps So Far: ${deviceStatus.activeStepsSoFar}
+  Day goal: ${deviceStatus.dayGoal}`;
+    }
+    message += `
+  Last Sync: ${await getLastSync(device.accessToken)}`;
+    console.log(message);
   }
 };
 
