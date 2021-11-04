@@ -10,14 +10,16 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v2
       - name: Install Deno (Unix)
-        run: |-
+        run: |
           curl -fsSL https://deno.land/x/install/install.sh | sh
           echo "$HOME/.deno/bin" >> $GITHUB_PATH
       - name: Create bundle
         run: deno bundle src/index.ts out.ts
         # run: deno bundle --lock lock.json src/index.ts out.ts
       - name: Push to deploy branch
-        run: |-
+        run: |
+          git config --global user.name 'Audrow Nash'
+          git config --global user.email 'audrow@users.noreply.github.com'
           git checkout -b deploy
           git add out.ts
           git commit -sm "Automated bundle operation"
