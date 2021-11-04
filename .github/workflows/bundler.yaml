@@ -1,0 +1,23 @@
+name: bundler
+
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v2
+      - name: Install Deno (Unix)
+        run: |-
+          curl -fsSL https://deno.land/x/install/install.sh | sh
+          echo "$HOME/.deno/bin" >> $GITHUB_PATH
+      - name: Create bundle
+        run: deno bundle --lock lock.json src/index.ts out.ts
+      - name: Push to deploy branch
+        run: |-
+          git checkout -b deploy
+          git add out.ts
+          git commit -sm "Automated bundle operation"
+          git push
