@@ -190,3 +190,13 @@ more thinking.
 
 Today I will work on fixing the status for the first day. If there is time, I
 will test on Windows.
+
+### Results
+
+I fixed the status for the first day, improved the status readout message,
+tested on windows, and began adding documentation (although not committed yet).
+In writing some documentation, I got to thinking about how to deploy this. I
+think the easiest way is to bundle it and ship it on Github. I created a Github
+Action to do this.
+
+My next step is to keep writing the documentation.
