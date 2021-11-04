@@ -14,7 +14,8 @@ jobs:
           curl -fsSL https://deno.land/x/install/install.sh | sh
           echo "$HOME/.deno/bin" >> $GITHUB_PATH
       - name: Create bundle
-        run: deno bundle --lock lock.json src/index.ts out.ts
+        run: deno bundle src/index.ts out.ts
+        # run: deno bundle --lock lock.json src/index.ts out.ts
       - name: Push to deploy branch
         run: |-
           git checkout -b deploy
