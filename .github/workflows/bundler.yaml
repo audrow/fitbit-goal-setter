@@ -4,7 +4,7 @@ on:
   push:
 
 jobs:
-  test:
+  bundle:
     runs-on: ubuntu-latest
     env:
       BUNDLE_DIR: build
@@ -16,6 +16,8 @@ jobs:
         run: |
           curl -fsSL https://deno.land/x/install/install.sh | sh
           echo "$HOME/.deno/bin" >> $GITHUB_PATH
+      - name: Run tests
+        run: deno test --coverage=./cov --unstable --allow-all
       - name: Create bundle
         run: |
           mkdir build
