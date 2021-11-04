@@ -74,6 +74,8 @@ const pullDataCallback = (_args: Arguments) => {
 };
 
 const getStatusCallback = async (_args: Arguments) => {
+  console.log("Working...");
+
   const status = await getStatus(config);
   for (const device of config.fitbit.devices) {
     const deviceStatus = status[device.name];
