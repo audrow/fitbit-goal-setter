@@ -185,3 +185,8 @@ machine to see if it works.
 I ended up testing and finding a bug where the status is not being generated
 correctly for day one. I tried several approaches to fix this. This will take
 more thinking.
+
+## 2021-11-04
+
+Today I will work on fixing the status for the first day. If there is time, I
+will test on Windows.
