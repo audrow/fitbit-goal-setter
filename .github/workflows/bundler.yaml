@@ -6,6 +6,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      BUNDLE_DIR: build
+      BUNDLE_FILE: fitbit-goal-setter.js
     steps:
       - name: Clone repository
         uses: actions/checkout@v2
@@ -14,13 +17,14 @@ jobs:
           curl -fsSL https://deno.land/x/install/install.sh | sh
           echo "$HOME/.deno/bin" >> $GITHUB_PATH
       - name: Create bundle
-        run: deno bundle src/index.ts out.ts
-        # run: deno bundle --lock lock.json src/index.ts out.ts
+        run: |
+          mkdir build
+          deno bundle --lock lock.json src/index.ts ${BUNDLE_DIR}/${BUNDLE_FILE}
       - name: Push to deploy branch
         run: |
           git config --global user.name 'Audrow Nash'
           git config --global user.email 'audrow@users.noreply.github.com'
           git checkout -b deploy
-          git add out.ts
+          git add ${BUNDLE_DIR}/${BUNDLE_FILE}
           git commit -sm "Automated bundle operation"
           git push --force-with-lease origin deploy
