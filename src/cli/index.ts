@@ -29,6 +29,10 @@ export interface callbacks {
    * calls the fitbit API with your own command
    */
   "call-fitbit-api": (args: Arguments) => void;
+  /*
+   * Makes a base config file and does not overwrite existing config file
+   */
+  "make-config-file": (args: Arguments) => void;
 }
 
 export const makeParser = (callbacks: callbacks) => {
@@ -59,6 +63,11 @@ export const makeParser = (callbacks: callbacks) => {
         command: "call-fitbit-api [request]",
         describe: "Make your own call to the fitbit API for all devices",
         handler: callbacks["call-fitbit-api"],
+      })
+      .command({
+        command: "make-config-file",
+        describe: "Make a config file. This doesn't overwrite existing config files, so if you want to make another config file, delete or rename the existing one.",
+        handler: callbacks["make-config-file"],
       })
       .alias("h", "help")
       .alias("v", "version")
