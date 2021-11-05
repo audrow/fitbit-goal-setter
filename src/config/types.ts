@@ -9,8 +9,8 @@ export type Configuration = {
       startStudyDate: Date;
       startInterventionDate: Date;
     }[];
-    activeSteps: ActiveStepsConfig;
+    debug: boolean;
   };
+  activeSteps: ActiveStepsConfig;
   goalSetting: GoalSettingConfig;
-  debug: boolean;
 };

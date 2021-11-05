@@ -51,7 +51,7 @@ const testApiKeys = async (args: Arguments) => {
       await getActiveStepTotal(
         device.accessToken,
         args.date,
-        config.fitbit.activeSteps,
+        config.activeSteps,
       );
     } catch (e) {
       console.error(
@@ -85,8 +85,9 @@ async function getActiveStepTotal(
 
 const pullDataCallback = async (_args: Arguments) => {
   const config = await loadConfig();
-  console.log("Pulling data...\n");
+  console.log("Pulling data...");
   await pullData(config);
+  console.log("Done!");
 };
 
 const getStatusCallback = async (_args: Arguments) => {
@@ -139,9 +140,19 @@ const callFitbitApi = async (args: Arguments) => {
 
 const makeConfigFile = async (_args: Arguments) => {
   const configMessage = `
+# The configuration file for the fitbit-goal-setter tool. This file helps define many of the specifics
+# of the behavior of this tool, such as what Fitbit devices should be used and how do we define active
+# steps and calculate goals.
+#
+# This file is in YAML format, and can be edited using any text editor.
+# Lines that start with # are comments and are ignored when the program reads the file.
+# In other words, they are only for your information. Feel free to delete them once you
+# feel like you understand this file.
+
+# Settings that relate to the Fitbit API
 fitbit:
+  # A list of fitbit devices, as well as their name and start dates
   devices:
-    # Add your devices here
     # You can add multiple devices here
     - name: My Fitbit device 1 # change this to your device name
       # Follow the instructions to get a valid access token
@@ -157,20 +168,28 @@ fitbit:
     #  accessToken: exJlbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM0JNNzIiLCJzdWIiOiI1VllYNjkiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJhY3QgcnNldCBybG9jIHJ3ZWkgcmhyIHJudXQgcnBybyByc2xlIiwiZXhwIjoxNjY2MzY0NDU4LCJpYXQiOjE2MzQ4Mjg0NTh9.jgF4MYOQsUTj9AZdnUcFRTPh2MMZsWu6HThpRhGcqCg
     #  startStudyDate: 2021-09-15T07:00:00.000Z
     #  startInterventionDate: 2021-09-24T07:00:00.000Z
-  activeSteps:
-    # The minimum duration of active minutes before active steps are counted
-    # If this value is 15, the participant must walk 15 or more minutes with more than a minimum number of steps
-    minDuration: 15
-    # The minimum number of steps in one minute for that minute to be counted as active
-    minStepsPerMin: 60
-    # The maximum gap in minutes allowed between minutes with active steps
-    # For example if the participant walks actively for 13 minutes, then takes a 2 minute break at a cross walk,
-    # and then walks another 2 active minutes, the participant will have 15 active minutes
-    # If the participant stops for 3 minutes and the maxInactiveMin is set to 2, the participant will have 13 active minutes
-    # and these 13 active minutes may not be counted towards their daily goal, depending on the value of minDuration
-    maxInactiveMin: 2
+  # If debug is 'true', you will see print statements for each day's data that is pulled from Fitbit or if it
+  # is skipped, because it is already saved in the 'data' folder
+  debug: false
+# Settings that apply to how active steps are calculated
+activeSteps:
+  # The minimum duration of active minutes before active steps are counted
+  # If this value is 15, the participant must walk 15 or more minutes with more than a minimum number of steps
+  minDuration: 15
+  # The minimum number of steps in one minute for that minute to be counted as active
+  minStepsPerMin: 60
+  # The maximum gap in minutes allowed between minutes with active steps
+  # For example if the participant walks actively for 13 minutes, then takes a 2 minute break at a cross walk,
+  # and then walks another 2 active minutes, the participant will have 15 active minutes
+  # If the participant stops for 3 minutes and the maxInactiveMin is set to 2, the participant will have 13 active minutes
+  # and these 13 active minutes may not be counted towards their daily goal, depending on the value of minDuration
+  maxInactiveMin: 2
+# Setting that are used in the goal setting process
 goalSetting:
-  # Set the study duration
+  # Set the duration of the intervention in weeks - this goes from each devices startInterventionDate for the
+  # specified number of weeks. Note that this doesn't include the dates included in between each devices startStudyDate
+  # and startInterventionDate (not including the startInterventionDate), as these dates are used to get an idea of what
+  # the first week of the intervention should use as an active steps goal.
   numOfWeeks: 6
   weekly:
     # The minimum active steps you would like to recommend in a week
@@ -192,8 +211,6 @@ goalSetting:
     # and have a goal of 10,000 steps, the minimum goal would be 2000 steps a day
     # the goal for the day will be 4000 = 2000 * 2.0
     maxImprovementRatio: 2.0
-# If debug is 'true', you will see print statements for each days data that is pulled from Fitbit or is skipped
-debug: false
 `;
   await Deno.writeTextFile(configFile, configMessage);
   console.log(`Created config file: ${configFile}`);

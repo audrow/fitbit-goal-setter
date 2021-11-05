@@ -258,7 +258,7 @@ export async function pullData(config: Configuration) {
       endDate,
       device.name,
       device.accessToken,
-      config.debug,
+      config.fitbit.debug,
     );
 
     if (isGreaterThanDate(device.startInterventionDate, currentDate)) {
@@ -269,7 +269,7 @@ export async function pullData(config: Configuration) {
       device.startStudyDate,
       device.startInterventionDate,
       device.name,
-      config.fitbit.activeSteps,
+      config.activeSteps,
     );
 
     const preStudyMeanDailyActiveSteps = getMean(
@@ -293,7 +293,7 @@ export async function pullData(config: Configuration) {
       const stepsArr = intradayToArray(steps);
       const activeStepsSoFar = getActiveSteps(
         stepsArr,
-        config.fitbit.activeSteps,
+        config.activeSteps,
       );
 
       const dayGoal = getDayGoal(
@@ -337,7 +337,7 @@ export async function pullData(config: Configuration) {
         const dailySteps = await getActiveStepsFromFile(
           date,
           device.name,
-          config.fitbit.activeSteps,
+          config.activeSteps,
         );
         weekSteps += dailySteps;
 
@@ -475,7 +475,7 @@ export async function getStatus(config: Configuration) {
       const intradayStepsArr = intradayToArray(intradaySteps);
       const activeSteps = getActiveSteps(
         intradayStepsArr,
-        config.fitbit.activeSteps,
+        config.activeSteps,
       );
       deviceStatus[device.name] = {
         dayGoal,
