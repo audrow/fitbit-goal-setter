@@ -436,7 +436,7 @@ export async function getStatus(config: Configuration) {
         comment:
           `Pre intervention period of getting steps baseline has began on ${device.startStudyDate.toLocaleDateString()} - the first day of the study is ${device.startInterventionDate.toLocaleDateString()}`,
       };
-    } else if (isGreaterThanDate(currentDate, lastDayOfStudy)) {
+    } else if (currentDate.getTime() >= lastDayOfStudy.getTime()) {
       deviceStatus[device.name] = {
         comment: "Study with device is over",
       };
