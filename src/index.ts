@@ -13,6 +13,7 @@ import type { ActiveStepsConfig } from "./active-steps/types.ts";
 import { getStatus, pullData, getLastDay } from "./caching/index.ts";
 
 const configFile = "config.yaml";
+
 const loadConfig = async () => {
   try {
     return await loadConfiguration(configFile);
@@ -188,7 +189,6 @@ goalSetting:
 # If debug is 'true', you will see print statements for each days data that is pulled from Fitbit or is skipped
 debug: false
 `
-  const configFile = 'config.yaml'
   await Deno.writeTextFile(configFile, configMessage)
   console.log(`Created config file: ${configFile}`)
 };
