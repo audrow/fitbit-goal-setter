@@ -1,5 +1,6 @@
 import { load as loadConfiguration } from "./config/index.ts";
 import { makeParser } from "./cli/index.ts";
+import { exists } from "./deps.ts";
 import type { Arguments } from "./deps.ts";
 import {
   fitbitRequest,
@@ -139,6 +140,12 @@ const callFitbitApi = async (args: Arguments) => {
 };
 
 const makeConfigFile = async (_args: Arguments) => {
+  if (await exists(configFile)) {
+    console.error(
+      `Config file '${configFile}' already exists - please delete it first`,
+    );
+    Deno.exit(1);
+  }
   const configMessage = `
 # The configuration file for the fitbit-goal-setter tool. This file helps define many of the specifics
 # of the behavior of this tool, such as what Fitbit devices should be used and how do we define active
