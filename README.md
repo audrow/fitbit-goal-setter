@@ -1,66 +1,117 @@
 # README
 
-A note on setup. Rather than write a program with OAuth2.0 (which would be a bit
-of work), I am using the implicit authorization token from the Fitbit tutorial
-page. To access the authorization token:
+The code in this repository helps with setting walking goals using a Fitbit
+device. Data obtained from the Fitbit API is downloaded to a folder called
+`data`; once downloaded, the data is used to count how many active steps the
+user has done each day and to set daily and weekly active step goals.
 
-1. Create a Fitbit app for each Fitbit. This can be a personal account or a
-   client account, if you have talked to Fitbit and gotten the okay to get the
-   intraday steps. I think it is probably easier to just create personal
-   accounts.
-1. Now get your access tokens.
-   1. After making your app, go to the
-      [apps gallery](https://dev.fitbit.com/apps) and click your app. Then click
-      the "OAuth 2.0 tutorial page" link. From here we will get the access code.
-   1. Make sure the Flow type is set to "Implicit Grant Flow"
-   1. Select all the scopes (we only need "Activity," but why not)
-   1. Change the "Expires In(ms)" to "31536000" (one year)
-   1. Click the link at the end of step one, which should look something like
-      the following:
-      > We've generated the authorization URL for you, all you need to do is
-      > just click on link below:
-      > https://www.fitbit.com/oauth2/authorize?response_type=token&client_id=23BM6L&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Ffitbit&scope=activity%20heartrate%20location%20nutrition%20profile%20settings%20sleep%20social%20weight&expires_in=31536000
-   1. Go through the login step and then arrive at a "This site cannot be
-      reached page"
-   1. Copy the URL into a text editor. The URL should look something like the
-      following:
-      > http://localhost:8080/fitbit#access_token=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM0JNNkwiLCJzdWIiOiI5TVBURFYiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJzZXQgcmFjdCBybG9jIHJ3ZWkgcmhyIHJwcm8gcm51dCByc2xlIiwiZXhwIjoxNjY2MTkwNzM0LCJpYXQiOjE2MzQ4MjY1OTB9.aUBqJpQzKP8KwnHcB18x6UoV_zc4sG-dL0nsCZH-3FM&user_id=9MPTDV&scope=settings+profile+weight+heartrate+social+location+activity+sleep+nutrition&token_type=Bearer&expires_in=31364144
-   1. Extract the access token from the URL. The access token is the string of
-      characters between `access_token=` and `&user_id`. For example, in the
-      above link, the following is the access token:
-      > eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM0JNNkwiLCJzdWIiOiI5TVBURFYiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJzZXQgcmFjdCBybG9jIHJ3ZWkgcmhyIHJwcm8gcm51dCByc2xlIiwiZXhwIjoxNjY2MTkwNzM0LCJpYXQiOjE2MzQ4MjY1OTB9.aUBqJpQzKP8KwnHcB18x6UoV_zc4sG-dL0nsCZH-3FM
-1. Put your token(s) in a YAML file:
-   1. A the top level of this project, create a file called `config.yaml` (you
-      can use any text editor for this).
-   1. Create a YAML file that has the following form:
-      ```
-      fitbit:
-        devices:
-          - name: Yellow Fitbit
-            accessToken: <your access token>
-      ```
-      For example, with the above code, the YAML file would look like
-      ```
-      fitbit:
-        devices:
-          - name: Yellow Fitbit
-            accessToken: eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM0JNNkwiLCJzdWIiOiI5TVBURFYiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJzZXQgcmFjdCBybG9jIHJ3ZWkgcmhyIHJwcm8gcm51dCByc2xlIiwiZXhwIjoxNjY2MTkwNzM0LCJpYXQiOjE2MzQ4MjY1OTB9.aUBqJpQzKP8KwnHcB18x6UoV_zc4sG-dL0nsCZH-3FM
-      ```
-      The `name` field can be whatever you would like. I've added it to help you
-      keep track of which data is coming from where, rather than having to keep
-      track of which access code corresponds to which Fitbit.
+This project uses [Deno](https://deno.land/) and
+[TypeScript](https://www.typescriptlang.org/).
 
-      You can add multiple access codes to a file. In this case, each one is
-      added by adding a new dash with a `name` and `accessToken`:
-      ```
-      fitbit:
-        devices:
-          - name: Yellow Fitbit
-            accessToken: <yellow fitbit access token>
-          - name: Red Fitbit
-            accessToken: <red fitbit access token>
-          - name: Blue Fitbit
-            accessToken: <blue fitbit access token>
-      ```
-      You can add as many Fitbit devices as possible.
-1. Check that you can get data from each Fitbit.
+## Installation
+
+1. Install Deno by going to the [Deno website](https://deno.land/) and following
+   the instructions. It should be one command to install Deno.
+   ![](docs/imgs/deno-land.png)
+1. Open a terminal (Windows PowerShell on Windows), create a directory where you
+   want, and go into it.
+   ```bash
+   mkdir fitbit-goal-setter
+   cd fitbit-goal-setter
+   ```
+1. Next let's make an executable for the program on your computer.
+   ```bash
+   deno compile --allow-read --allow-write --allow-net https://raw.githubusercontent.com/audrow/fitbit-goal-setter/deploy/build/fitbit-goal-setter.js
+   ```
+   Now you have my program in an executable file! You can test that the program
+   works by running
+   ```bash
+   # For windows
+   .\fitbit-goal-setter.exe --help
+   # For ubuntu/mac
+   ./fitbit-goal-setter --help
+   ```
+   which will output something like the following:
+   ```bash
+   deno run <command>
+
+   Commands:
+     deno run list-devices               List all devices
+     deno run test-api-keys              Test API keys
+     deno run goal-status                Get goal status
+     deno run pull-data                  Pull data from the Fitbit API
+     deno run call-fitbit-api [request]  Make your own call to the fitbit API for a
+                                         ll devices
+     deno run make-config-file           Make a config file. This doesn't overwrite
+                                         existing config files, so if you want to
+                                         make another config file, delete or rename
+                                         the existing one.
+
+   Options:
+     -h, --help     Show help                                             [boolean]
+     -v, --version  Show version number                                   [boolean]
+   ```
+   Note that each command begins with `deno run <command>`, this is a quirk of
+   the library that I'm using for the command line interface. It should say
+   `.\fitbit-goal-setter.exe <command>` on Windows and
+   `./fitbit-goal-setter <command>` on Linux/macOS.
+
+   Also, note that we haven't set up our config file, so you won't be able to
+   run most of the commands yet.
+
+1. Now let's create a configuration file. This is how you'll set various aspects
+   of the system up, such as how you define active steps, the Fitbit API
+   credentials, the study and intervention dates, etc.
+   ```bash
+   # For windows
+   .\fitbit-goal-setter.exe make-config-file
+   # For ubuntu/mac
+   ./fitbit-goal-setter make-config-file
+   ```
+   You should see the following output:
+   ```bash
+   Created config file: config.yaml
+   ```
+1. Now we need to edit the configuration file. You can open the file in any text
+   editor, for example on Windows you can use notepad:
+   ```bash
+   # For windows
+   notepad.exe .\config.yaml
+   ```
+   The config file has several comments in it. The main thing is that you must
+   have at least one Fitbit access token. For instructions on getting the Fitbit
+   access token see [here](./docs/getting-fitbit-access-token.md).
+
+   You also will want to set the study and intervention dates, as well as the
+   duration of the study in weeks.
+
+1. Once you have the configuration file setup, you can check the API keys to see
+   if they are correct before proceeding. This command will check if you're able
+   to connect to the Fitbit API at all and if you have access to the intraday
+   steps. Both of these checks are necessary before you can run the rest of the
+   commands.
+   ```bash
+   # For windows
+   .\fitbit-goal-setter.exe test-api-keys
+   # For ubuntu/mac
+   ./fitbit-goal-setter test-api-keys
+   ```
+   If this was not successful, make sure that you're using the right access
+   token and that you have the right permissions to access the Fitbit intra
+   process data. Make sure you've done everything correct in
+   [this page](./docs/getting-fitbit-access-token.md).
+
+Now you're setup! The main command that you'll be using is `goal-status`, which
+prints information on the status of all devices in the configuration file.
+
+```bash
+# For windows
+   .\fitbit-goal-setter.exe goal-status
+   # For ubuntu/mac
+   ./fitbit-goal-setter goal-status
+```
+
+All of the data generated from the Fitbit API as well as a summary of each days
+results is stored in a folder called `data` that will be created for you when
+you run `goal-status` or `pull-data` (`pull-data` is run automatically when you
+run `goal-status`).
