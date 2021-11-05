@@ -7,9 +7,10 @@ import {
   getLastSync,
   intradayToArray,
 } from "./fitbit-api/index.ts";
+import { getDayNumber, } from "./utils/index.ts";
 import { getActiveSteps } from "./active-steps/index.ts";
 import type { ActiveStepsConfig } from "./active-steps/types.ts";
-import { getStatus, pullData } from "./caching/index.ts";
+import { getStatus, pullData, getLastDay } from "./caching/index.ts";
 
 const configFile = "config.yaml";
 const loadConfig = async () => {
@@ -88,9 +89,14 @@ const getStatusCallback = async (_args: Arguments) => {
   console.log("Working...");
 
   const config = await loadConfig();
+
+  const currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+
   const status = await getStatus(config);
   for (const device of config.fitbit.devices) {
     const deviceStatus = status[device.name];
+    const dayNumber = getDayNumber(currentDate, device.startInterventionDate)
     let message = `
 Device: ${device.name}`;
     if ("comment" in deviceStatus) {
@@ -99,11 +105,16 @@ Device: ${device.name}`;
     } else {
       message += `
   ${deviceStatus.isMet ? "HAS MET DAILY GOAL" : "Haven't met daily goal yet"}
+  Last sync: ${await getLastSync(device.accessToken)}
   Active Steps So Far: ${deviceStatus.activeStepsSoFar}
-  Day goal: ${deviceStatus.dayGoal}`;
+  Day goal: ${deviceStatus.dayGoal}
+  Day number: ${dayNumber}
+  Days remaining: ${7*config.goalSetting.numOfWeeks - dayNumber}`;
     }
     message += `
-  Last Sync: ${await getLastSync(device.accessToken)}`;
+  Study start: ${device.startStudyDate.toLocaleDateString()}
+  Intervention start: ${device.startInterventionDate.toLocaleDateString()}
+  Intervention end: ${getLastDay(device.startInterventionDate, config.goalSetting.numOfWeeks).toLocaleDateString()}`;
     console.log(message);
   }
 };

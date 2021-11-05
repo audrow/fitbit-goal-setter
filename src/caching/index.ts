@@ -401,7 +401,7 @@ async function writeSummaryToCSV(
 }
 
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
-function getLastDay(startDate: Date, numOfWeeks: number) {
+export function getLastDay(startDate: Date, numOfWeeks: number) {
   return new Date(startDate.getTime() + MS_PER_DAY * numOfWeeks * 7);
 }
 
@@ -438,7 +438,7 @@ export async function getStatus(config: Configuration) {
       };
     } else if (currentDate.getTime() >= lastDayOfStudy.getTime()) {
       deviceStatus[device.name] = {
-        comment: "Study with device is over",
+        comment: `Study with device ended on ${lastDayOfStudy.toLocaleDateString()}`,
       };
     } else {
       const lastRecord = record[record.length - 1];
