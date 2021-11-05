@@ -200,3 +200,7 @@ think the easiest way is to bundle it and ship it on Github. I created a Github
 Action to do this.
 
 My next step is to keep writing the documentation.
+
+## 2021-11-05
+
+Today is a documentation day.
