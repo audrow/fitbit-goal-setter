@@ -438,7 +438,8 @@ export async function getStatus(config: Configuration) {
       };
     } else if (currentDate.getTime() >= lastDayOfStudy.getTime()) {
       deviceStatus[device.name] = {
-        comment: `Study with device ended on ${lastDayOfStudy.toLocaleDateString()}`,
+        comment:
+          `Study with device ended on ${lastDayOfStudy.toLocaleDateString()}`,
       };
     } else {
       const lastRecord = record[record.length - 1];

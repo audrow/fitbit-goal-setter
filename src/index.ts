@@ -7,10 +7,10 @@ import {
   getLastSync,
   intradayToArray,
 } from "./fitbit-api/index.ts";
-import { getDayNumber, } from "./utils/index.ts";
+import { getDayNumber } from "./utils/index.ts";
 import { getActiveSteps } from "./active-steps/index.ts";
 import type { ActiveStepsConfig } from "./active-steps/types.ts";
-import { getStatus, pullData, getLastDay } from "./caching/index.ts";
+import { getLastDay, getStatus, pullData } from "./caching/index.ts";
 
 const configFile = "config.yaml";
 
@@ -18,10 +18,13 @@ const loadConfig = async () => {
   try {
     return await loadConfiguration(configFile);
   } catch (e) {
-    console.error(`No config file '${configFile}' found - you can use the 'make-config-file' command to make a starter config file\n`, e);
+    console.error(
+      `No config file '${configFile}' found - you can use the 'make-config-file' command to make a starter config file\n`,
+      e,
+    );
     Deno.exit(1);
   }
-}
+};
 
 const listDevices = async (_args: Arguments) => {
   console.log("Devices\n-------");
@@ -97,7 +100,7 @@ const getStatusCallback = async (_args: Arguments) => {
   const status = await getStatus(config);
   for (const device of config.fitbit.devices) {
     const deviceStatus = status[device.name];
-    const dayNumber = getDayNumber(currentDate, device.startInterventionDate)
+    const dayNumber = getDayNumber(currentDate, device.startInterventionDate);
     let message = `
 Device: ${device.name}`;
     if ("comment" in deviceStatus) {
@@ -110,12 +113,15 @@ Device: ${device.name}`;
   Active Steps So Far: ${deviceStatus.activeStepsSoFar}
   Day goal: ${deviceStatus.dayGoal}
   Day number: ${dayNumber}
-  Days remaining: ${7*config.goalSetting.numOfWeeks - dayNumber}`;
+  Days remaining: ${7 * config.goalSetting.numOfWeeks - dayNumber}`;
     }
     message += `
   Study start: ${device.startStudyDate.toLocaleDateString()}
   Intervention start: ${device.startInterventionDate.toLocaleDateString()}
-  Intervention end: ${getLastDay(device.startInterventionDate, config.goalSetting.numOfWeeks).toLocaleDateString()}`;
+  Intervention end: ${
+      getLastDay(device.startInterventionDate, config.goalSetting.numOfWeeks)
+        .toLocaleDateString()
+    }`;
     console.log(message);
   }
 };
@@ -131,7 +137,7 @@ const callFitbitApi = async (args: Arguments) => {
   }
 };
 
-const makeConfigFile = async (args: Arguments) => {
+const makeConfigFile = async (_args: Arguments) => {
   const configMessage = `
 fitbit:
   devices:
@@ -188,9 +194,9 @@ goalSetting:
     maxImprovementRatio: 2.0
 # If debug is 'true', you will see print statements for each days data that is pulled from Fitbit or is skipped
 debug: false
-`
-  await Deno.writeTextFile(configFile, configMessage)
-  console.log(`Created config file: ${configFile}`)
+`;
+  await Deno.writeTextFile(configFile, configMessage);
+  console.log(`Created config file: ${configFile}`);
 };
 
 const parser = makeParser({

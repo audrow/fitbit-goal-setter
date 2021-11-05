@@ -66,7 +66,8 @@ export const makeParser = (callbacks: callbacks) => {
       })
       .command({
         command: "make-config-file",
-        describe: "Make a config file. This doesn't overwrite existing config files, so if you want to make another config file, delete or rename the existing one.",
+        describe:
+          "Make a config file. This doesn't overwrite existing config files, so if you want to make another config file, delete or rename the existing one.",
         handler: callbacks["make-config-file"],
       })
       .alias("h", "help")
