@@ -21,7 +21,7 @@ This project uses [Deno](https://deno.land/) and
    ```
 1. Next let's make an executable for the program on your computer.
    ```bash
-   deno compile --allow-read --allow-write --allow-net https://raw.githubusercontent.com/audrow/fitbit-goal-setter/deploy/build/fitbit-goal-setter.js
+   deno compile --allow-read --allow-write --allow-net --reload https://raw.githubusercontent.com/audrow/fitbit-goal-setter/deploy/build/fitbit-goal-setter.js
    ```
    Now you have my program in an executable file! You can test that the program
    works by running
