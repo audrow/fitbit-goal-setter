@@ -207,7 +207,8 @@ Today is a documentation day.
 
 ### Results
 
-I ended up making several small code improvements. I a way of generating the config file and also made the output of status nicer and added more information.
+I ended up making several small code improvements. I a way of generating the
+config file and also made the output of status nicer and added more information.
 
 ## 2021-11-06
 
