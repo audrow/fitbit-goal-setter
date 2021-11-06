@@ -8,7 +8,7 @@ user has done each day and to set daily and weekly active step goals.
 This project uses [Deno](https://deno.land/) and
 [TypeScript](https://www.typescriptlang.org/).
 
-## Installation
+## Setup
 
 1. Install Deno by going to the [Deno website](https://deno.land/) and following
    the instructions. It should be one command to install Deno.
