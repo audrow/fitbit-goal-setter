@@ -135,7 +135,8 @@ const callFitbitApi = async (args: Arguments) => {
       requestUrl: args.request,
       accessToken: device.accessToken,
     });
-    console.log(`\nDevice: ${device.name}\n${response}`);
+    console.log(`\nDevice: ${device.name}`);
+    console.log(response);
   }
 };
 
