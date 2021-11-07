@@ -51,7 +51,7 @@ get your access token.
    fitbit-goal-setter.cmd --help
    ```
    which will output something like the following:
-   ```bash
+   ```
    deno run <command>
 
    Commands:
