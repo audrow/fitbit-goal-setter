@@ -168,7 +168,9 @@ run `goal-status`). To see the generated data folder, run the command `ls`.
 ### make-config-file
 
 Makes a dummy configuration file for you. You can then modify the dummy
-configuration file to your own liking and add your own Fitbit devices.
+configuration file to your own liking and add your own Fitbit devices. You can
+use the `--minimal` option to make a minimal config file, which doesn't have any
+of the comments or whitespace.
 
 ### goal-status
 
@@ -242,6 +244,44 @@ or from getting explicit permission from Fitbit to use your app with intraday
 steps data. See
 [getting the Fitbit access token](./getting-fitbit-access-tokens.md) for more
 information.
+
+### It seems to be hanging when I run `goal-status`. What's going on?
+
+I'm not sure. I found that this occurred occasionally when I tested on Windows.
+If it does, just hit Ctrl-C and try again and probably it will finish up and
+give you the correct output.
+
+### I'm getting a YAML error, how do I fix it?
+
+YAML is a format for storing data. One of the way data is structured in YAML is
+through the spacing. Often you'll get an error where the error mentions how to
+fix it. For example:
+
+```bash
+Check that your config file 'config.yaml' is valid YAML format
+ YAMLError: bad indentation of a mapping entry at line 18, column 2:
+     daily:
+     ^
+    at generateError (https://deno.land/std@0.113.0/encoding/_yaml/loader/loader.ts:161:10)
+    at throwError (https://deno.land/std@0.113.0/encoding/_yaml/loader/loader.ts:174:9)
+    at readBlockMapping (https://deno.land/std@0.113.0/encoding/_yaml/loader/loader.ts:1227:14)
+    at composeNode (https://deno.land/std@0.113.0/encoding/_yaml/loader/loader.ts:1502:13)
+    at readDocument (https://deno.land/std@0.113.0/encoding/_yaml/loader/loader.ts:1688:3)
+    at loadDocuments (https://deno.land/std@0.113.0/encoding/_yaml/loader/loader.ts:1750:5)
+    at load (https://deno.land/std@0.113.0/encoding/_yaml/loader/loader.ts:1780:21)
+    at parse (https://deno.land/std@0.113.0/encoding/_yaml/parse.ts:18:10)
+    at load (file:///Users/audrow/Code/fitbit-script/src/config/index.ts:5:25)
+    at async loadConfig (file:///Users/audrow/Code/fitbit-script/src/index.ts:20:12)
+```
+
+In this case, you know the line number and that something to do with the
+indentation is wrong. If you go and have a look, you can probably tell what is
+wrong.
+
+Other cases may not be that straight forward. If the error is very confusing, I
+recommend just regenerating the config file and copying your settings into it.
+You can do this piece by piece and rerun a command, like `test-api-keys` to see
+what you are doing wrong.
 
 ### The program was working and now has stopped working, what happened?
 
