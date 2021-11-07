@@ -10,42 +10,56 @@ This project uses [Deno](https://deno.land/) and
 
 ## Setup
 
-1. Install Deno by going to the [Deno website](https://deno.land/) and following
-   the instructions. It should be one command to install Deno.
-   ![](docs/imgs/deno-land.png)
-1. Open a terminal (Windows PowerShell on Windows), create a directory where you
-   want, and go into it.
+1. Install [Deno](https://deno.land/). You can find install instructions on
+   Deno's website or try the commands below.
    ```bash
-   mkdir fitbit-goal-setter
-   cd fitbit-goal-setter
+   # For ubuntu/mac
+   curl -fsSL https://deno.land/x/install/install.sh | sh
    ```
+   ```bash
+   # For windows (using PowerShell)
+   iwr https://deno.land/x/install/install.ps1 -useb | iex
+   ```
+1. Open a terminal (Windows PowerShell on Windows), create a directory where you
+   want, and go into it. The directory can be called whatever you want. In the
+   following commands, we create a directory called `fitbit`, but you could use
+   anything else.
+   ```bash
+   mkdir fitbit
+   cd fitbit
+   ```
+   Not that you will return to this directory anytime you run the commands
+   below.
 1. Next let's make an executable for the program on your computer.
    ```bash
    deno compile --allow-read --allow-write --allow-net --reload https://raw.githubusercontent.com/audrow/fitbit-goal-setter/deploy/build/fitbit-goal-setter.js
    ```
-   Now you have my program in an executable file! You can test that the program
-   works by running
+   Now you have my program in an executable file! You can check that the program
+   is there by running the command `ls`, which lists the contents of your
+   current directory. You can also test that the program works by running
+   ```bash
+   # For ubuntu/mac
+   ./fitbit-goal-setter --help
+   ```
    ```bash
    # For windows
    .\fitbit-goal-setter.exe --help
-   # For ubuntu/mac
-   ./fitbit-goal-setter --help
    ```
    which will output something like the following:
    ```bash
    deno run <command>
 
    Commands:
-     deno run list-devices               List all devices
-     deno run test-api-keys              Test API keys
-     deno run goal-status                Get goal status
-     deno run pull-data                  Pull data from the Fitbit API
-     deno run call-fitbit-api [request]  Make your own call to the fitbit API for a
-                                         ll devices
-     deno run make-config-file           Make a config file. This doesn't overwrite
-                                         existing config files, so if you want to
-                                         make another config file, delete or rename
-                                         the existing one.
+     deno run list-devices                  List all devices
+     deno run test-api-keys                 Test API keys
+     deno run goal-status                   Get goal status
+     deno run pull-data                     Pull data from the Fitbit API
+     deno run call-fitbit-api <request>     Make your own call to the fitbit API fo
+                                           r all devices
+     deno run make-config-file [--minimal]  Make a config file. This doesn't overwr
+                                           ite existing config files, so if you wa
+                                           nt to make another config file, delete
+                                           or rename the existing one.
 
    Options:
      -h, --help     Show help                                             [boolean]
@@ -63,27 +77,45 @@ This project uses [Deno](https://deno.land/) and
    of the system up, such as how you define active steps, the Fitbit API
    credentials, the study and intervention dates, etc.
    ```bash
-   # For windows
-   .\fitbit-goal-setter.exe make-config-file
    # For ubuntu/mac
    ./fitbit-goal-setter make-config-file
+   ```
+   ```bash
+   # For windows
+   .\fitbit-goal-setter.exe make-config-file
    ```
    You should see the following output:
    ```bash
    Created config file: config.yaml
    ```
 1. Now we need to edit the configuration file. You can open the file in any text
-   editor, for example on Windows you can use notepad:
+   editor, for example on Windows you can use Notepad. Note that the config file
+   will look better in a code editor, like
+   [Visual Studio Code](https://code.visualstudio.com/).
    ```bash
    # For windows
    notepad.exe .\config.yaml
    ```
-   The config file has several comments in it. The main thing is that you must
-   have at least one Fitbit access token. For instructions on getting the Fitbit
-   access token see [here](./docs/getting-fitbit-access-token.md).
+   The config file has several comments in it, which are lines that start with
+   #. The comments are intended to help you understand how to use the config
+   file. If you don't like the comments, you can delete the config file and then
+   run the command again with the `--minimal` option.
+   ```bash
+   # For ubuntu/mac
+   # rm ./config.yaml # remove the config file
+   ./fitbit-goal-setter make-config-file --minimal
+   ```
+   ```bash
+   # For windows
+   # rm .\config.yaml # remove the config file
+   .\fitbit-goal-setter.exe make-config-file --minimal
+   ```
 
-   You also will want to set the study and intervention dates, as well as the
-   duration of the study in weeks.
+   The main thing is that you must have at least one Fitbit device setup. This
+   requires you to define study and intervention start dates, as well as to get
+   an access token for each Fitbit device that you plan to use. For instructions
+   on getting an access token from Fitbit, see
+   [here](./docs/getting-fitbit-access-token.md).
 
 1. Once you have the configuration file setup, you can check the API keys to see
    if they are correct before proceeding. This command will check if you're able
@@ -91,10 +123,12 @@ This project uses [Deno](https://deno.land/) and
    steps. Both of these checks are necessary before you can run the rest of the
    commands.
    ```bash
-   # For windows
-   .\fitbit-goal-setter.exe test-api-keys
    # For ubuntu/mac
    ./fitbit-goal-setter test-api-keys
+   ```
+   ```bash
+   # For windows
+   .\fitbit-goal-setter.exe test-api-keys
    ```
    If this was not successful, make sure that you're using the right access
    token and that you have the right permissions to access the Fitbit intra
@@ -105,16 +139,19 @@ Now you're setup! The main command that you'll be using is `goal-status`, which
 prints information on the status of all devices in the configuration file.
 
 ```bash
+# For ubuntu/mac
+./fitbit-goal-setter goal-status
+```
+
+```bash
 # For windows
-   .\fitbit-goal-setter.exe goal-status
-   # For ubuntu/mac
-   ./fitbit-goal-setter goal-status
+.\fitbit-goal-setter.exe goal-status
 ```
 
 All of the data generated from the Fitbit API as well as a summary of each days
 results is stored in a folder called `data` that will be created for you when
 you run `goal-status` or `pull-data` (`pull-data` is run automatically when you
-run `goal-status`).
+run `goal-status`). To see the generated data folder, run the command `ls`.
 
 ## Commands
 
