@@ -10,6 +10,11 @@ This project uses [Deno](https://deno.land/) and
 
 ## Setup
 
+Note that you'll need your Fitbit access tokens in this setup. You can see
+[this page](./docs/getting-fitbit-access-tokens.md) for instructions on how to
+get your access token.
+
+1. Open a terminal (Windows PowerShell on Windows).
 1. Install [Deno](https://deno.land/). You can find install instructions on
    Deno's website or try the commands below.
    ```bash
@@ -20,16 +25,6 @@ This project uses [Deno](https://deno.land/) and
    # For windows (using PowerShell)
    iwr https://deno.land/x/install/install.ps1 -useb | iex
    ```
-1. Open a terminal (Windows PowerShell on Windows), create a directory where you
-   want, and go into it. The directory can be called whatever you want. In the
-   following commands, we create a directory called `fitbit`, but you could use
-   anything else.
-   ```bash
-   mkdir fitbit
-   cd fitbit
-   ```
-   Not that you will return to this directory anytime you run the commands
-   below.
 1. Next let's make an executable for the program on your computer.
    ```bash
    deno install --allow-read --allow-write --allow-net --reload https://raw.githubusercontent.com/audrow/fitbit-goal-setter/deploy/build/fitbit-goal-setter.js
@@ -82,6 +77,16 @@ This project uses [Deno](https://deno.land/) and
 
    Also, note that we haven't set up our config file, so you won't be able to
    run most of the commands yet.
+
+1. Create a directory where you want, and go into it. The directory can be
+   called whatever you want. In the following commands, we create a directory
+   called `fitbit`, but you could use anything else.
+   ```bash
+   mkdir fitbit
+   cd fitbit
+   ```
+   Note that this is the directory where your data will be downloaded to and
+   where you should commands from in the future.
 
 1. Now let's create a configuration file. This is how you'll set various aspects
    of the system up, such as how you define active steps, the Fitbit API
@@ -162,6 +167,11 @@ All of the data generated from the Fitbit API as well as a summary of each days
 results is stored in a folder called `data` that will be created for you when
 you run `goal-status` or `pull-data` (`pull-data` is run automatically when you
 run `goal-status`). To see the generated data folder, run the command `ls`.
+
+The files in the `data` folder are CSV files (Comma Separated Values), which
+separate data by commas. You can open this data file in Excel or any other
+spreadsheet program, like Google Sheets. For each device, there is a summary
+page and then a folder with all of the downloaded intraday steps data.
 
 ## Commands
 
@@ -250,6 +260,12 @@ information.
 I'm not sure. I found that this occurred occasionally when I tested on Windows.
 If it does, just hit Ctrl-C and try again and probably it will finish up and
 give you the correct output.
+
+### It can't find my config file, what's going on?
+
+Make sure that you are in the same directory that you created the config file
+in. You can do a `ls` to see what files and folders are in your current
+directory, and use `cd` to move into the correct directory.
 
 ### I'm getting a YAML error, how do I fix it?
 
