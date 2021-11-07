@@ -1,6 +1,6 @@
 import { load as loadConfiguration } from "./config/index.ts";
 import { makeParser } from "./cli/index.ts";
-import { exists } from "./deps.ts";
+import { exists, YAMLError } from "./deps.ts";
 import type { Arguments } from "./deps.ts";
 import {
   fitbitRequest,
@@ -19,10 +19,19 @@ const loadConfig = async () => {
   try {
     return await loadConfiguration(configFile);
   } catch (e) {
-    console.error(
-      `No config file '${configFile}' found - you can use the 'make-config-file' command to make a starter config file\n`,
-      e,
-    );
+    if (e instanceof Deno.errors.NotFound) {
+      console.error(
+        `No config file '${configFile}' found - you can use the 'make-config-file' command to make a starter config file\n`,
+        e,
+      );
+    } else if (e instanceof YAMLError) {
+      console.error(
+        `Check that your config file '${configFile}' is valid YAML format\n`,
+        e,
+      );
+    } else {
+      console.error(e);
+    }
     Deno.exit(1);
   }
 };

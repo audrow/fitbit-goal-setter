@@ -11,3 +11,4 @@ export { ensureDir } from "https://deno.land/std@0.113.0/fs/ensure_dir.ts";
 export { exists } from "https://deno.land/std@0.113.0/fs/exists.ts";
 export { format } from "https://deno.land/std@0.113.0/datetime/mod.ts";
 export { parse } from "https://deno.land/std@0.113.0/encoding/yaml.ts";
+export { YAMLError } from "https://deno.land/std@0.113.0/encoding/_yaml/error.ts";
