@@ -130,7 +130,7 @@ get your access token.
    requires you to define study and intervention start dates, as well as to get
    an access token for each Fitbit device that you plan to use. For instructions
    on getting an access token from Fitbit, see
-   [here](./docs/getting-fitbit-access-token.md).
+   [here](./docs/getting-fitbit-access-tokens.md).
 
 1. Once you have the configuration file setup, you can check the API keys to see
    if they are correct before proceeding. This command will check if you're able
