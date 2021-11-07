@@ -218,3 +218,7 @@ Today hopefully I will finish the documentation. I will also test on Windows.
 
 Today, I think that I finished the documentation. I'll go back and read through
 it once and test that it all is well put together.
+
+## 2021-11-07
+
+Today is testing on Windows day.
