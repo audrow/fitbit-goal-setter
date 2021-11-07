@@ -118,9 +118,7 @@ export async function pullIntradaySteps(
         );
       }
     } else {
-      if (isDebug) {
-        console.debug(`saving data for ${dateStr} for '${deviceName}'`);
-      }
+      console.debug(`saving data for ${dateStr} for '${deviceName}'`);
       const steps = await getIntradaySteps(accessToken, date);
       await writeIntradayStepsToCsv(steps, file);
     }

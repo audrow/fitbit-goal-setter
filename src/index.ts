@@ -88,11 +88,11 @@ const pullDataCallback = async (_args: Arguments) => {
   const config = await loadConfig();
   console.log("Pulling data...");
   await pullData(config);
-  console.log("Done!");
+  console.log("Done pulling data!");
 };
 
-const getStatusCallback = async (_args: Arguments) => {
-  console.log("Working...");
+const getStatusCallback = async (args: Arguments) => {
+  await pullDataCallback(args);
 
   const config = await loadConfig();
 
@@ -140,7 +140,7 @@ const callFitbitApi = async (args: Arguments) => {
   }
 };
 
-const makeConfigFile = async (_args: Arguments) => {
+const makeConfigFile = async (args: Arguments) => {
   if (await exists(configFile)) {
     console.error(
       `Config file '${configFile}' already exists - please delete it first`,
@@ -162,9 +162,9 @@ fitbit:
   # A list of fitbit devices, as well as their name and start dates
   devices:
     # You can add multiple devices here
-    - name: My Fitbit device 1 # change this to your device name
+    - name: My Example Device
       # Follow the instructions to get a valid access token
-      accessToken: exJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM0JNNzIiLCJzdWIiOiI1VllYNjkiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJhY3QgcnNldCBybG9jIHJ3ZWkgcmhyIHJudXQgcnBybyByc2xlIiwiZXhwIjoxNjY2MzY0NDU4LCJpYXQiOjE2MzQ4Mjg0NTh9.jgF4MYOQsUTj9AZdnUcFRTPh2MMZsWu6HThpRhGcqCg
+      accessToken: <Your access token>
       # Set the date that you want to begin measuring their activity data
       # Note the format is YYYY-MM-DDT07:00:00.000Z to use California's timezone
       startStudyDate: 2021-09-15T07:00:00.000Z
@@ -220,7 +220,17 @@ goalSetting:
     # the goal for the day will be 4000 = 2000 * 2.0
     maxImprovementRatio: 2.0
 `;
-  await Deno.writeTextFile(configFile, configMessage);
+  let out = "";
+  if (args.minimal) {
+    configMessage.split("\n").forEach((line) => {
+      if (!(line.trim().startsWith("#") || line.trim() === "")) {
+        out += line + "\n";
+      }
+    });
+  } else {
+    out = configMessage;
+  }
+  await Deno.writeTextFile(configFile, out);
   console.log(`Created config file: ${configFile}`);
 };
 

@@ -60,14 +60,21 @@ export const makeParser = (callbacks: callbacks) => {
         handler: callbacks["pull-data"],
       })
       .command({
-        command: "call-fitbit-api [request]",
+        command: "call-fitbit-api <request>",
         describe: "Make your own call to the fitbit API for all devices",
         handler: callbacks["call-fitbit-api"],
       })
       .command({
-        command: "make-config-file",
+        command: "make-config-file [--minimal]",
         describe:
           "Make a config file. This doesn't overwrite existing config files, so if you want to make another config file, delete or rename the existing one.",
+        // deno-lint-ignore no-explicit-any
+        builder: (yargs: any) =>
+          yargs.option("minimal", {
+            default: false,
+            describe: "Removes comments from the config file",
+            type: "boolean",
+          }),
         handler: callbacks["make-config-file"],
       })
       .alias("h", "help")
