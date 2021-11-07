@@ -32,18 +32,28 @@ This project uses [Deno](https://deno.land/) and
    below.
 1. Next let's make an executable for the program on your computer.
    ```bash
-   deno compile --allow-read --allow-write --allow-net --reload https://raw.githubusercontent.com/audrow/fitbit-goal-setter/deploy/build/fitbit-goal-setter.js
+   deno install --allow-read --allow-write --allow-net --reload https://raw.githubusercontent.com/audrow/fitbit-goal-setter/deploy/build/fitbit-goal-setter.js
    ```
-   Now you have my program in an executable file! You can check that the program
-   is there by running the command `ls`, which lists the contents of your
-   current directory. You can also test that the program works by running
+   Now you have my program!
+
+   Note that you can uninstall the program by running the following command:
    ```bash
    # For ubuntu/mac
-   ./fitbit-goal-setter --help
+   deno uninstall fitbit-goal-setter
    ```
    ```bash
    # For windows
-   .\fitbit-goal-setter.exe --help
+   deno uninstall fitbit-goal-setter.cmd
+   ```
+
+   You can test that the program works by running
+   ```bash
+   # For ubuntu/mac
+   fitbit-goal-setter --help
+   ```
+   ```bash
+   # For windows
+   fitbit-goal-setter.cmd --help
    ```
    which will output something like the following:
    ```bash
@@ -67,8 +77,8 @@ This project uses [Deno](https://deno.land/) and
    ```
    Note that each command begins with `deno run <command>`, this is a quirk of
    the library that I'm using for the command line interface. It should say
-   `.\fitbit-goal-setter.exe <command>` on Windows and
-   `./fitbit-goal-setter <command>` on Linux/macOS.
+   `fitbit-goal-setter.cmd <command>` on Windows and
+   `fitbit-goal-setter <command>` on Linux/macOS.
 
    Also, note that we haven't set up our config file, so you won't be able to
    run most of the commands yet.
@@ -78,11 +88,11 @@ This project uses [Deno](https://deno.land/) and
    credentials, the study and intervention dates, etc.
    ```bash
    # For ubuntu/mac
-   ./fitbit-goal-setter make-config-file
+   fitbit-goal-setter make-config-file
    ```
    ```bash
    # For windows
-   .\fitbit-goal-setter.exe make-config-file
+   fitbit-goal-setter.cmd make-config-file
    ```
    You should see the following output:
    ```bash
@@ -103,12 +113,12 @@ This project uses [Deno](https://deno.land/) and
    ```bash
    # For ubuntu/mac
    # rm ./config.yaml # remove the config file
-   ./fitbit-goal-setter make-config-file --minimal
+   fitbit-goal-setter make-config-file --minimal
    ```
    ```bash
    # For windows
    # rm .\config.yaml # remove the config file
-   .\fitbit-goal-setter.exe make-config-file --minimal
+   fitbit-goal-setter.cmd make-config-file --minimal
    ```
 
    The main thing is that you must have at least one Fitbit device setup. This
@@ -124,11 +134,11 @@ This project uses [Deno](https://deno.land/) and
    commands.
    ```bash
    # For ubuntu/mac
-   ./fitbit-goal-setter test-api-keys
+   fitbit-goal-setter test-api-keys
    ```
    ```bash
    # For windows
-   .\fitbit-goal-setter.exe test-api-keys
+   fitbit-goal-setter.cmd test-api-keys
    ```
    If this was not successful, make sure that you're using the right access
    token and that you have the right permissions to access the Fitbit intra
@@ -140,12 +150,12 @@ prints information on the status of all devices in the configuration file.
 
 ```bash
 # For ubuntu/mac
-./fitbit-goal-setter goal-status
+fitbit-goal-setter goal-status
 ```
 
 ```bash
 # For windows
-.\fitbit-goal-setter.exe goal-status
+fitbit-goal-setter.cmd goal-status
 ```
 
 All of the data generated from the Fitbit API as well as a summary of each days
