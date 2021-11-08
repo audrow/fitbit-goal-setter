@@ -13,20 +13,21 @@ import { getActiveSteps } from "./active-steps/index.ts";
 import type { ActiveStepsConfig } from "./active-steps/types.ts";
 import { getLastDay, getStatus, pullData } from "./caching/index.ts";
 
-const configFile = "config.yaml";
+const CONFIG_FILE = "config.yaml";
+const DAYS_IN_WEEK = 7;
 
 const loadConfig = async () => {
   try {
-    return await loadConfiguration(configFile);
+    return await loadConfiguration(CONFIG_FILE);
   } catch (e) {
     if (e instanceof Deno.errors.NotFound) {
       console.error(
-        `No config file '${configFile}' found - you can use the 'make-config-file' command to make a starter config file\n`,
+        `No config file '${CONFIG_FILE}' found - you can use the 'make-config-file' command to make a starter config file\n`,
         e,
       );
     } else if (e instanceof YAMLError) {
       console.error(
-        `Check that your config file '${configFile}' is valid YAML format\n`,
+        `Check that your config file '${CONFIG_FILE}' is valid YAML format\n`,
         e,
       );
     } else {
@@ -111,7 +112,7 @@ const getStatusCallback = async (args: Arguments) => {
   const status = await getStatus(config);
   for (const device of config.fitbit.devices) {
     const deviceStatus = status[device.name];
-    const dayNumber = getDayNumber(currentDate, device.startInterventionDate);
+    const dayNumber = getDayNumber(currentDate, device.startInterventionDate) + 1;
     let message = `
 Device: ${device.name}`;
     if ("comment" in deviceStatus) {
@@ -124,7 +125,7 @@ Device: ${device.name}`;
   Active Steps So Far: ${deviceStatus.activeStepsSoFar}
   Day goal: ${deviceStatus.dayGoal}
   Day number: ${dayNumber}
-  Days remaining: ${7 * config.goalSetting.numOfWeeks - dayNumber}`;
+  Days remaining: ${DAYS_IN_WEEK * config.goalSetting.numOfWeeks - dayNumber}`;
     }
     message += `
   Study start: ${device.startStudyDate.toLocaleDateString()}
@@ -150,9 +151,9 @@ const callFitbitApi = async (args: Arguments) => {
 };
 
 const makeConfigFile = async (args: Arguments) => {
-  if (await exists(configFile)) {
+  if (await exists(CONFIG_FILE)) {
     console.error(
-      `Config file '${configFile}' already exists - please delete it first`,
+      `Config file '${CONFIG_FILE}' already exists - please delete it first`,
     );
     Deno.exit(1);
   }
@@ -239,8 +240,8 @@ goalSetting:
   } else {
     out = configMessage;
   }
-  await Deno.writeTextFile(configFile, out);
-  console.log(`Created config file: ${configFile}`);
+  await Deno.writeTextFile(CONFIG_FILE, out);
+  console.log(`Created config file: ${CONFIG_FILE}`);
 };
 
 const parser = makeParser({
