@@ -112,7 +112,8 @@ const getStatusCallback = async (args: Arguments) => {
   const status = await getStatus(config);
   for (const device of config.fitbit.devices) {
     const deviceStatus = status[device.name];
-    const dayNumber = getDayNumber(currentDate, device.startInterventionDate) + 1;
+    const dayNumber = getDayNumber(currentDate, device.startInterventionDate) +
+      1;
     let message = `
 Device: ${device.name}`;
     if ("comment" in deviceStatus) {
