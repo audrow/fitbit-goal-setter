@@ -171,20 +171,20 @@ fitbit:
   # A list of fitbit devices, as well as their name and start dates
   devices:
     # You can add multiple devices here
-    - name: My Example Device
+    - name: Example Device 1
       # Follow the instructions to get a valid access token
       accessToken: <Your access token>
       # Set the date that you want to begin measuring their activity data
-      # Note the format is YYYY-MM-DDT07:00:00.000Z to use California's timezone
-      startStudyDate: 2021-09-15T07:00:00.000Z
+      # the first goal will be set from the average active steps each day during this period
+      startStudyDate: 2021-09-15
       # Set the date that you want to be getting goals for them
-      startInterventionDate: 2021-09-24T07:00:00.000Z
+      startInterventionDate: 2021-09-24
     # You can add multiple devices here, but you'll need to change the name and accessToken
     # The Fitbit device below is commented out with the # characters - delete the # to use it
-    # - name: My Fitbit device 2
-    #  accessToken: exJlbGciOiJIUzI1NiJ9.eyJhdWQiOiIyM0JNNzIiLCJzdWIiOiI1VllYNjkiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJhY3QgcnNldCBybG9jIHJ3ZWkgcmhyIHJudXQgcnBybyByc2xlIiwiZXhwIjoxNjY2MzY0NDU4LCJpYXQiOjE2MzQ4Mjg0NTh9.jgF4MYOQsUTj9AZdnUcFRTPh2MMZsWu6HThpRhGcqCg
-    #  startStudyDate: 2021-09-15T07:00:00.000Z
-    #  startInterventionDate: 2021-09-24T07:00:00.000Z
+    # - name: Example Device 2
+    #  accessToken: <Your access token>
+    #  startStudyDate: 2021-09-15
+    #  startInterventionDate: 2021-09-24
   # If debug is 'true', you will see print statements for each day's data that is pulled from Fitbit or if it
   # is skipped, because it is already saved in the 'data' folder
   debug: false

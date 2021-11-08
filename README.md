@@ -168,12 +168,6 @@ results is stored in a folder called `data` that will be created for you when
 you run `goal-status` or `pull-data` (`pull-data` is run automatically when you
 run `goal-status`). To see the generated data folder, run the command `ls`.
 
-Note, that you should check that the dates you set are correct. On my Windows
-virtual machine, I was having trouble getting the dates to parse correctly. It
-was parsing one day before, likely because of the timezone. If the dates for the
-start of the study and intervention are one day before you'd like them, just
-move them one day later.
-
 The files in the `data` folder are CSV files (Comma Separated Values), which
 separate data by commas. You can open this data file in Excel or any other
 spreadsheet program, like Google Sheets. For each device, there is a summary
@@ -245,12 +239,6 @@ Device: My Fitbit Device
 ```
 
 ## FAQ
-
-### Why are my start and end dates the day before?
-
-I was seeing this weirdness in a Windows Virtual machine. I'm not sure why, but
-the fix is easy, just bump each date forward by one day. Unfortunately, I'm not
-sure of a good solution to this without using another date library.
 
 ### Why can I not connect to the Fitbit API?
 
