@@ -237,7 +237,7 @@ goalSetting:
     # If in the algorithm, the lower bound is meant to be the minimum goal * 1.25 and the upper bound is meant to be
     # 2.0 as in the example, then the weekly minImprovementRatio should be 1.25 and the upperBoundToLowerBoundRatio
     # should be 1.6 (upper bound constant / lower bound constant = 2.0 / 1.25 = 1.6).
-    upperBoundToLowerBoundRatio: 1.6;
+    upperBoundToLowerBoundRatio: 1.6
 `;
   let out = "";
   if (args.minimal) {
