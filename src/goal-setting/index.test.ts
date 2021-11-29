@@ -13,6 +13,7 @@ const configLongStudy: GoalSettingConfig = {
   daily: {
     daysPerWeek: 5,
     maxImprovementRatio: 2.0,
+    upperBoundToLowerBoundRatio: 2.0,
   },
 };
 
@@ -26,6 +27,7 @@ const configRealisticStudy: GoalSettingConfig = {
   daily: {
     daysPerWeek: 5,
     maxImprovementRatio: 2.0,
+    upperBoundToLowerBoundRatio: 2.0,
   },
 };
 
@@ -39,6 +41,7 @@ const configHighImprovementRatio: GoalSettingConfig = {
   daily: {
     daysPerWeek: 5,
     maxImprovementRatio: 2.0,
+    upperBoundToLowerBoundRatio: 2.0,
   },
 };
 
@@ -52,6 +55,7 @@ const configShortStudy: GoalSettingConfig = {
   daily: {
     daysPerWeek: 5,
     maxImprovementRatio: 2.0,
+    upperBoundToLowerBoundRatio: 2.0,
   },
 };
 Deno.test({

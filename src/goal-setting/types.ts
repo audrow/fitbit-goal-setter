@@ -8,5 +8,6 @@ export type GoalSettingConfig = {
   daily: {
     daysPerWeek: number;
     maxImprovementRatio: number;
+    upperBoundToLowerBoundRatio: number;
   };
 };

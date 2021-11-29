@@ -39,64 +39,6 @@ export async function readIntradayStepsFromCsv(file: string) {
   return data;
 }
 
-export async function writeDaySummaryToCsv(
-  file: string,
-  info: {
-    date: Date;
-    stepsGoal: number;
-    activeSteps: number;
-  },
-) {
-  const header = ["date", "steps goal", "active steps", "met goal"];
-  const newData = [
-    info.date.toLocaleDateString(),
-    info.stepsGoal.toString(),
-    info.activeSteps.toString(),
-    (info.activeSteps >= info.stepsGoal).toString(),
-  ];
-  let data = [];
-  const fileExists = await exists(file);
-  if (fileExists) {
-    const oldData = (await readDaySummaryFromCsvString(file));
-    data = [...oldData, newData];
-  } else {
-    data = [newData];
-  }
-  const f = await Deno.open(file, { write: true, createNew: !fileExists });
-  await writeCSV(f, [header, ...data]);
-  f.close();
-}
-
-async function readDaySummaryFromCsvString(file: string) {
-  if (!await exists(file)) {
-    return [];
-  }
-  const f = await Deno.open(file, { read: true });
-  const data = [];
-  for await (const obj of readCSVObjects(f)) {
-    data.push([
-      obj["date"],
-      obj["steps goal"],
-      obj["active steps"],
-      obj["met goal"],
-    ]);
-  }
-  f.close();
-  return data;
-}
-
-export async function readDaySummaryFromCsv(file: string) {
-  const data = await readDaySummaryFromCsvString(file);
-  return data.map((row) => {
-    return {
-      date: new Date(row[0]),
-      stepsGoal: Number(row[1]),
-      activeSteps: Number(row[2]),
-      metGoal: row[3] === "true",
-    };
-  });
-}
-
 export async function pullIntradaySteps(
   startDate: Date,
   endDate: Date,
@@ -222,7 +164,8 @@ type SummaryRecord = {
   weekNum: number;
   dayNum: number;
   weeklyStepsGoal: number;
-  dailyStepsGoal: number;
+  lowerDailyStepsGoal: number;
+  upperDailyStepsGoal: number;
   activeStepsThisDay: number;
   activeStepsThisWeek: number;
   isMet: boolean;
@@ -273,10 +216,10 @@ export async function pullData(config: Configuration) {
     const preStudyMeanDailyActiveSteps = getMean(
       preStudyActiveSteps.map((d) => d.activeSteps),
     );
-    const baseWeeklyStepsGoal = Math.max(
+    const baseWeeklyStepsGoal = Math.floor(Math.max(
       preStudyMeanDailyActiveSteps * config.goalSetting.daily.daysPerWeek,
       config.goalSetting.weekly.minSteps,
-    );
+    ));
 
     const interventionDatesSoFar = getDateRange(
       device.startInterventionDate,
@@ -307,7 +250,10 @@ export async function pullData(config: Configuration) {
         weekNum: 1,
         dayNum: 0,
         weeklyStepsGoal: baseWeeklyStepsGoal,
-        dailyStepsGoal: dayGoal,
+        lowerDailyStepsGoal: dayGoal,
+        upperDailyStepsGoal: Math.floor(
+          dayGoal * config.goalSetting.daily.upperBoundToLowerBoundRatio,
+        ),
         activeStepsThisDay: activeStepsSoFar,
         activeStepsThisWeek: activeStepsSoFar,
         isMet: dayGoal <= activeStepsSoFar,
@@ -351,7 +297,10 @@ export async function pullData(config: Configuration) {
           weekNum,
           dayNum,
           weeklyStepsGoal: weekGoals[weekNum],
-          dailyStepsGoal: dayGoal,
+          lowerDailyStepsGoal: dayGoal,
+          upperDailyStepsGoal: Math.floor(
+            dayGoal * config.goalSetting.daily.upperBoundToLowerBoundRatio,
+          ),
           activeStepsThisDay: dailySteps,
           activeStepsThisWeek: weekSteps,
           isMet: dayGoal <= dailySteps,
@@ -378,7 +327,8 @@ async function writeSummaryToCSV(
     "weekNum",
     "dayNum",
     "weeklyStepsGoal",
-    "dailyStepsGoal",
+    "lowerDailyStepsGoal",
+    "upperDailyStepsGoal",
     "activeStepsThisDay",
     "activeStepsThisWeek",
     "isMet",
@@ -393,6 +343,11 @@ async function writeSummaryToCSV(
       }
     });
   });
+  console.log(`Writing ${file}`);
+  console.log(data);
+  if (await exists(file)) {
+    await Deno.remove(file);
+  }
   const f = await Deno.open(file, { write: true, create: true });
   await writeCSV(f, [header, ...data]);
   f.close();
@@ -410,7 +365,8 @@ function getMean(arr: number[]) {
 export async function getStatus(config: Configuration) {
   const deviceStatus: {
     [deviceName: string]: {
-      dayGoal: number;
+      lowerDayGoal: number;
+      upperDayGoal: number;
       activeStepsSoFar: number;
       isMet: boolean;
     } | { comment: string };
@@ -459,7 +415,7 @@ export async function getStatus(config: Configuration) {
           config.goalSetting,
         );
       }
-      const dayGoal = getDayGoal(
+      const lowerDayGoal = getDayGoal(
         weekGoal,
         lastRecord.activeStepsThisWeek,
         device.startInterventionDate,
@@ -476,9 +432,12 @@ export async function getStatus(config: Configuration) {
         config.activeSteps,
       );
       deviceStatus[device.name] = {
-        dayGoal,
+        lowerDayGoal: lowerDayGoal,
+        upperDayGoal: Math.floor(
+          lowerDayGoal * config.goalSetting.daily.upperBoundToLowerBoundRatio,
+        ),
         activeStepsSoFar: activeSteps,
-        isMet: dayGoal <= activeSteps,
+        isMet: activeSteps >= lowerDayGoal,
       };
     }
   }

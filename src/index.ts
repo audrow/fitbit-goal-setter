@@ -112,8 +112,7 @@ const getStatusCallback = async (args: Arguments) => {
   const status = await getStatus(config);
   for (const device of config.fitbit.devices) {
     const deviceStatus = status[device.name];
-    const dayNumber = getDayNumber(currentDate, device.startInterventionDate) +
-      1;
+    const dayNumber = getDayNumber(currentDate, device.startInterventionDate);
     let message = `
 Device: ${device.name}`;
     if ("comment" in deviceStatus) {
@@ -124,7 +123,9 @@ Device: ${device.name}`;
   ${deviceStatus.isMet ? "HAS MET DAILY GOAL" : "Haven't met daily goal yet"}
   Last sync: ${await getLastSync(device.accessToken)}
   Active Steps So Far: ${deviceStatus.activeStepsSoFar}
-  Day goal: ${deviceStatus.dayGoal}
+  Day goals:
+    Lower bound: ${deviceStatus.lowerDayGoal}
+    Upper bound: ${deviceStatus.upperDayGoal}
   Day number: ${dayNumber}
   Days remaining: ${DAYS_IN_WEEK * config.goalSetting.numOfWeeks - dayNumber}`;
     }
@@ -217,8 +218,8 @@ goalSetting:
     finalGoal: 10000
     # The minimum improvement in active steps you would like to recommend from their current number of steps
     # For example, they did 3000 active steps last week, the minimum number of steps recommended would be
-    # 3300 = 3000 * 1.1
-    minImprovementRatio: 1.1
+    # 3750 = 3000 * 1.25
+    minImprovementRatio: 1.25
   daily:
     # The number of days per week that you expect them to try to achieve their walking goal
     # For example, if this value is 5, they can take up to two days off a week and it will not affect
@@ -230,6 +231,13 @@ goalSetting:
     # and have a goal of 10,000 steps, the minimum goal would be 2000 steps a day
     # the goal for the day will be 4000 = 2000 * 2.0
     maxImprovementRatio: 2.0
+    # This number is used to set the upper bound on the daily goal. It is a little different than
+    # algorithm given, since the minimum goal is calculated from the minimum weekly goal, which uses the
+    # minImprovementRatio.
+    # If in the algorithm, the lower bound is meant to be the minimum goal * 1.25 and the upper bound is meant to be
+    # 2.0 as in the example, then the weekly minImprovementRatio should be 1.25 and the upperBoundToLowerBoundRatio
+    # should be 1.6 (upper bound constant / lower bound constant = 2.0 / 1.25 = 1.6).
+    upperBoundToLowerBoundRatio: 1.6;
 `;
   let out = "";
   if (args.minimal) {
