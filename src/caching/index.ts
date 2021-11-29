@@ -343,8 +343,6 @@ async function writeSummaryToCSV(
       }
     });
   });
-  console.log(`Writing ${file}`);
-  console.log(data);
   if (await exists(file)) {
     await Deno.remove(file);
   }
