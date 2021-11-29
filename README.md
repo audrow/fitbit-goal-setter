@@ -25,7 +25,8 @@ get your access token.
    # For windows (using PowerShell)
    iwr https://deno.land/x/install/install.ps1 -useb | iex
    ```
-1. Next let's make an executable for the program on your computer.
+1. Next let's make an executable for the program on your computer (you also use
+   this command to update this program to a newer version).
    ```bash
    deno install --allow-read --allow-write --allow-net --reload https://raw.githubusercontent.com/audrow/fitbit-goal-setter/deploy/build/fitbit-goal-setter.js
    ```
@@ -239,6 +240,15 @@ Device: My Fitbit Device
 ```
 
 ## FAQ
+
+### How do I upgrade to a newer version of this program?
+
+Run the following command (same command as getting this program for the first
+time):
+
+```bash
+deno install --allow-read --allow-write --allow-net --reload https://raw.githubusercontent.com/audrow/fitbit-goal-setter/deploy/build/fitbit-goal-setter.js
+```
 
 ### Why can I not connect to the Fitbit API?
 
