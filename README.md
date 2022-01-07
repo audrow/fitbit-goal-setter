@@ -19,11 +19,11 @@ get your access token.
    Deno's website or try the commands below.
    ```bash
    # For ubuntu/mac
-   curl -fsSL https://deno.land/x/install/install.sh | sh
+   curl -fsSL https://deno.land/install.sh | sh
    ```
    ```bash
    # For windows (using PowerShell)
-   iwr https://deno.land/x/install/install.ps1 -useb | iex
+   iwr https://deno.land/install.ps1 -useb | iex
    ```
 1. Next let's make an executable for the program on your computer (you also use
    this command to update this program to a newer version).
