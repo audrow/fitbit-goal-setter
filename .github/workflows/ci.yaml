@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Install Deno (Unix)
         run: |-
-          curl -fsSL https://deno.land/x/install/install.sh | sh
+          curl -fsSL https://deno.land/install.sh | sh
           echo "$HOME/.deno/bin" >> $GITHUB_PATH
       - name: Run tests
         run: deno test --coverage=./cov --unstable --allow-all
@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Install Deno
         run: |-
-          curl -fsSL https://deno.land/x/install/install.sh | sh
+          curl -fsSL https://deno.land/install.sh | sh
           echo "$HOME/.deno/bin" >> $GITHUB_PATH
       - name: Format
         run: deno fmt --check
