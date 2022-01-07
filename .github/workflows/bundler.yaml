@@ -20,7 +20,7 @@ jobs:
         run: deno test --coverage=./cov --unstable --allow-all
       - name: Create bundle
         run: |
-          mkdir build
+          mkdir ${BUNDLE_DIR}
           deno bundle --lock lock.json src/index.ts ${BUNDLE_DIR}/${BUNDLE_FILE}
       - name: Push to deploy branch
         run: |
